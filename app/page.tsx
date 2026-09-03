@@ -54,7 +54,7 @@ export default function Home() {
           </a>
         </nav>
 
-        <button className="text-2xl md:hidden">
+        <button className="text-3xl md:hidden">
           ☰
         </button>
       </header>
