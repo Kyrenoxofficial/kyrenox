@@ -538,7 +538,7 @@ export default function Home() {
   </div>
 
   <div className="mt-20 w-full max-w-[556px] rounded-xl border border-[#E5E7EB] bg-[#F8F9FA] px-8 py-8">
-  <div className="grid grid-cols-[minmax(0,1fr)_12px_minmax(0,1fr)_12px_minmax(0,1fr)_12px_minmax(0,1fr)_12px_minmax(0,1fr)] items-start">
+<div className="grid grid-cols-[48px_12px_48px_12px_48px_12px_60px_12px_48px] items-start justify-center">
 
       <div className="text-center">
         <UserRound className="mx-auto h-4 w-4 text-[#111111]" strokeWidth={1.7} />
