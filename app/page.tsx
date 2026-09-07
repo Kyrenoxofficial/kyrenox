@@ -89,7 +89,7 @@ export default function Home() {
             </a>
 
             <a
-              href="#get-started"
+             href="mailto:hello@kyrenox.co?subject=Kyrenox%20Demo"
               className="rounded-md border border-[#D9DDE3] bg-white px-6 py-4 text-sm font-medium text-black"
             >
               Book Demo
