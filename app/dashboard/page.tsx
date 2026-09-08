@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { createClient } from "../utils/supabase/server";
 import {
   BarChart3,
   FileText,
@@ -8,8 +10,22 @@ import {
   Users,
 } from "lucide-react";
 
-export default function DashboardPage() {
-  return (
+export default async function DashboardPage() {
+    const supabase = await createClient();
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
+  redirect("/login");
+}
+ const { data: profile } = await supabase
+  .from("profiles")
+  .select("has_access")
+  .eq("user_id", user.id)
+  .single();
+
+if (!profile?.has_access) {
+  redirect("/");
+}
+return (
     <main className="min-h-screen bg-[#F8F9FA] text-[#111111]">
       <div className="flex min-h-screen">
         {/* Sidebar */}
@@ -95,6 +111,24 @@ export default function DashboardPage() {
               <Settings className="h-4 w-4" />
               Settings
             </a>
+            <form
+  action={async () => {
+    "use server";
+
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/login");
+    
+  }}
+  className="mt-2"
+>
+  <button
+    type="submit"
+    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+  >
+    Log out
+  </button>
+</form>
           </div>
         </aside>
 

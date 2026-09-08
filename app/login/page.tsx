@@ -125,6 +125,14 @@ router.push("/dashboard");
           {/* Google */}
           <button
             type="button"
+onClick={async () => {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://kyrenox.co/dashboard",
+    },
+  });
+}}
             className="relative flex h-11 w-full items-center justify-center rounded-lg border border-[#E5E7EB] bg-white text-sm font-medium text-[#111111] transition hover:bg-[#F8F9FA]"
           >
             <span className="absolute left-4">
