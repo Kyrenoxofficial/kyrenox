@@ -17,6 +17,7 @@ CircleCheck,
 } from "lucide-react";
 export default function Home() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <main className="min-h-screen bg-white text-black">
       {/* Header */}
@@ -33,7 +34,7 @@ export default function Home() {
 </div>
 
         <nav className="hidden items-center gap-10 text-sm md:flex">
-          <a href="#product" className="hover:opacity-60">
+          <a href="#features" className="hover:opacity-60">
             Features
           </a>
           <a href="#pricing" className="hover:opacity-60">
@@ -54,10 +55,65 @@ export default function Home() {
           </a>
         </nav>
 
-        <button className="text-3xl md:hidden">
-          ☰
-        </button>
+        <button
+  className="text-3xl md:hidden"
+  onClick={() => setMobileMenuOpen((prev) => !prev)}
+>
+  ☰
+</button>
       </header>
+      {mobileMenuOpen && (
+  <div className="md:hidden border-b border-[#E5E7EB] bg-white px-8 py-6">
+    <nav className="flex flex-col gap-5 text-sm">
+      <a
+        href="#features"
+        onClick={() => setMobileMenuOpen(false)}
+        className="hover:opacity-60"
+      >
+        Features
+      </a>
+
+      <a
+        href="#pricing"
+        onClick={() => setMobileMenuOpen(false)}
+        className="hover:opacity-60"
+      >
+        Pricing
+      </a>
+
+      <a
+        href="#product"
+        onClick={() => setMobileMenuOpen(false)}
+        className="hover:opacity-60"
+      >
+        Resources
+      </a>
+
+      <a
+        href="#faq"
+        onClick={() => setMobileMenuOpen(false)}
+        className="hover:opacity-60"
+      >
+        FAQ
+      </a>
+
+      <a
+        href="#pricing"
+        onClick={() => setMobileMenuOpen(false)}
+        className="hover:opacity-60"
+      >
+        Get Kyrenox
+      </a>
+
+      <a
+        href="#"
+        className="hover:opacity-60"
+      >
+        Login
+      </a>
+    </nav>
+  </div>
+)}
 
       {/* Hero */}
       <section className="mx-auto grid w-full max-w-6xl items-start gap-16 px-8 pb-32 pt-20 md:grid-cols-2 md:px-12 md:pt-24">
@@ -232,7 +288,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-   <section className="mx-auto max-w-6xl px-8 py-24 md:px-12">
+   <section id="features" className="mx-auto max-w-6xl px-8 py-24 md:px-12">
   {/* Features heading */}
   <div className="max-w-2xl">
     <p className="text-[10px] text-[#6B7280]">
