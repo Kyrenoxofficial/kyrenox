@@ -663,7 +663,7 @@ export default function Home() {
 
         <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-5">
           <span className="w-fit rounded bg-[#F0F1F3] px-1.5 py-0.5 text-[10px] text-[#9CA3AF]">
-            Notion
+            CRM
           </span>
 
           <span className="w-fit rounded bg-[#F0F1F3] px-1.5 py-0.5 text-[10px] text-[#9CA3AF]">
@@ -715,7 +715,7 @@ export default function Home() {
     </p>
 
     <p className="mt-2 text-xs text-[#6B7280]">
-      Notion workspace
+      Your work, one system. 
     </p>
 
     <div className="mt-10">
@@ -729,7 +729,7 @@ export default function Home() {
     </div>
 
     <p className="mt-7 text-sm font-medium text-[#111111]">
-      Lifetime access to the Notion system
+      Lifetime access to Kyrenox
     </p>
 
     <div className="mt-7 space-y-2 text-[10px] text-[#111111]">
@@ -779,9 +779,9 @@ export default function Home() {
           "You get an all-in-one workspace with client management, proposals, AI tools, project tracking, analytics, and automation workflows.",
       },
       {
-        question: "Do I need Notion to use it?",
+        question: "Do I need an account to use Kyrenox?",
         answer:
-          "Yes. Kyrenox is built in Notion, so you'll need a Notion account to use the workspace.",
+  "Yes. You'll need a Kyrenox account to access your workspace.",
       },
       {
         question: "How does the setup work?",
