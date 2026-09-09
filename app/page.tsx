@@ -106,7 +106,7 @@ export default function Home() {
       </a>
 
       <a
-        href="#"
+        href="/login"
         className="hover:opacity-60"
       >
         Login
