@@ -43,7 +43,7 @@ export default function Home() {
           <a href="#product" className="hover:opacity-60">
             Resources
           </a>
-          <a href="#" className="hover:opacity-60">
+          <a href="/login" className="hover:opacity-60">
             Login
           </a>
 
