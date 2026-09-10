@@ -11,7 +11,7 @@ export default function LoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-6xl flex-col items-center justify-center">
         {/* Kyrenox logo */}
         <div className="mb-14">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
   <img
     src="/kyrenox-logo.svg"
     alt=""

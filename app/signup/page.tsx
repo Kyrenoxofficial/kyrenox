@@ -10,7 +10,7 @@ export default function SignupPage() {
     <main className="min-h-screen bg-[#F8F9FA] px-6 py-12">
       <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-6xl flex-col items-center justify-center">
         <div className="mb-14">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Image
               src="/kyrenox-logo.svg"
               alt=""

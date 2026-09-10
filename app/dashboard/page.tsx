@@ -5,10 +5,12 @@ import {
   FileText,
   FolderKanban,
   LayoutDashboard,
+  Menu,
   Settings,
   Sparkles,
   Users,
 } from "lucide-react";
+import MobileSidebar from "../MobileSidebar";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -135,6 +137,7 @@ return (
         {/* Main content */}
         <section className="flex-1">
           <header className="flex h-20 items-center justify-between border-b border-[#E5E7EB] bg-white px-6 md:px-10">
+           <MobileSidebar />
             <div>
               <p className="text-sm text-[#6B7280]">Workspace</p>
               <h1 className="text-lg font-semibold">Dashboard</h1>
@@ -177,9 +180,9 @@ return (
               </div>
 
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
-                <p className="text-xs text-[#6B7280]">Saved AI Prompts</p>
+                <p className="text-xs text-[#6B7280]">Tasks</p>
                 <p className="mt-2 text-2xl font-semibold">42</p>
-                <p className="mt-1 text-xs text-[#6B7280]">Workspace library</p>
+               <p className="mt-1 text-xs text-orange-500">8 due today</p>
               </div>
             </div>
 
