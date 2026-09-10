@@ -16,6 +16,10 @@ export const metadata: Metadata = {
  title: "Kyrenox — The OS for Independent Work",
   description: "Kyrenox is the operating system for independent work.",
 };
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
