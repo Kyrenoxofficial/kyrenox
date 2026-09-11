@@ -11,6 +11,8 @@ import {
   Users,
 } from "lucide-react";
 import MobileSidebar from "../MobileSidebar";
+import TaskList from "../TaskList";
+import NewMenu from "../NewMenu";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -27,6 +29,116 @@ if (!user) {
 if (!profile?.has_access) {
   redirect("/");
 }
+const { count: clientCount } = await supabase
+  .from("clients")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id);
+  
+  const startOfMonth = new Date();
+startOfMonth.setUTCDate(1);
+startOfMonth.setUTCHours(0, 0, 0, 0);
+
+const { count: newClientsThisMonth } = await supabase
+  .from("clients")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id)
+  .gte("created_at", startOfMonth.toISOString());
+
+const { count: activeProjectCount } = await supabase
+  .from("projects")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id)
+  .eq("status", "active");
+
+  const startOfWeek = new Date();
+const day = startOfWeek.getUTCDay();
+const diff = day === 0 ? -6 : 1 - day;
+startOfWeek.setUTCDate(startOfWeek.getUTCDate() + diff);
+startOfWeek.setUTCHours(0, 0, 0, 0);
+
+const { count: newProjectsThisWeek } = await supabase
+  .from("projects")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id)
+  .eq("status", "active")
+  .gte("created_at", startOfWeek.toISOString());
+
+  const { count: openTaskCount } = await supabase
+  .from("tasks")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id)
+  .eq("completed", false);
+
+  const startOfToday = new Date();
+startOfToday.setUTCHours(0, 0, 0, 0);
+
+const endOfToday = new Date(startOfToday);
+endOfToday.setUTCDate(endOfToday.getUTCDate() + 1);
+
+const { count: dueTodayCount } = await supabase
+  .from("tasks")
+  .select("*", { count: "exact", head: true })
+  .eq("user_id", user.id)
+  .eq("completed", false)
+  .gte("due_date", startOfToday.toISOString())
+  .lt("due_date", endOfToday.toISOString());
+
+  const { data: revenueRows } = await supabase
+  .from("revenue")
+  .select("amount")
+  .eq("user_id", user.id)
+  .eq("status", "paid");
+
+const totalRevenue =
+  revenueRows?.reduce((total, row) => total + Number(row.amount), 0) ?? 0;
+
+const startOfCurrentMonth = new Date();
+startOfCurrentMonth.setUTCDate(1);
+startOfCurrentMonth.setUTCHours(0, 0, 0, 0);
+
+const startOfPreviousMonth = new Date(startOfCurrentMonth);
+startOfPreviousMonth.setUTCMonth(startOfPreviousMonth.getUTCMonth() - 1);
+
+const { data: currentMonthRevenueRows } = await supabase
+  .from("revenue")
+  .select("amount")
+  .eq("user_id", user.id)
+  .eq("status", "paid")
+  .gte("paid_at", startOfCurrentMonth.toISOString());
+
+const { data: previousMonthRevenueRows } = await supabase
+  .from("revenue")
+  .select("amount")
+  .eq("user_id", user.id)
+  .eq("status", "paid")
+  .gte("paid_at", startOfPreviousMonth.toISOString())
+  .lt("paid_at", startOfCurrentMonth.toISOString());
+
+const currentMonthRevenue =
+  currentMonthRevenueRows?.reduce(
+    (total, row) => total + Number(row.amount),
+    0
+  ) ?? 0;
+
+const previousMonthRevenue =
+  previousMonthRevenueRows?.reduce(
+    (total, row) => total + Number(row.amount),
+    0
+  ) ?? 0;
+
+const revenueGrowth =
+  previousMonthRevenue === 0
+    ? null
+    : ((currentMonthRevenue - previousMonthRevenue) /
+        previousMonthRevenue) *
+      100;
+
+  const { data: todayTasks } = await supabase
+  .from("tasks")
+  .select("id, title, completed, due_date")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(4);
 return (
     <main className="min-h-screen bg-[#F8F9FA] text-[#111111]">
       <div className="flex min-h-screen">
@@ -143,9 +255,7 @@ return (
               <h1 className="text-lg font-semibold">Dashboard</h1>
             </div>
 
-            <button className="rounded-lg bg-[#111111] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222]">
-              + New
-            </button>
+            <NewMenu />
           </header>
 
           <div className="mx-auto max-w-7xl px-6 py-10 md:px-10">
@@ -163,26 +273,41 @@ return (
             <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
                 <p className="text-xs text-[#6B7280]">Revenue</p>
-                <p className="mt-2 text-2xl font-semibold">€42,580</p>
-                <p className="mt-1 text-xs text-green-600">+18.4% this month</p>
+                <p className="mt-2 text-2xl font-semibold">
+  €{totalRevenue.toLocaleString("de-DE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })}
+</p>
+                <p className="mt-1 text-xs text-green-600">
+  {revenueGrowth === null
+    ? "No data yet"
+    : `${revenueGrowth >= 0 ? "+" : ""}${revenueGrowth.toFixed(1)}% this month`}
+</p>
               </div>
 
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
                 <p className="text-xs text-[#6B7280]">Active Projects</p>
-                <p className="mt-2 text-2xl font-semibold">18</p>
-                <p className="mt-1 text-xs text-green-600">+3 this week</p>
+                <p className="mt-2 text-2xl font-semibold">{activeProjectCount ?? 0}</p>
+                <p className="mt-1 text-xs text-green-600">
+  +{newProjectsThisWeek ?? 0} this week
+</p>
               </div>
 
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
                 <p className="text-xs text-[#6B7280]">Clients</p>
-                <p className="mt-2 text-2xl font-semibold">124</p>
-                <p className="mt-1 text-xs text-green-600">+12 this month</p>
+                <p className="mt-2 text-2xl font-semibold">{clientCount ?? 0}</p>
+                <p className="mt-1 text-xs text-green-600">
+  +{newClientsThisMonth ?? 0} this month
+</p>
               </div>
 
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
                 <p className="text-xs text-[#6B7280]">Tasks</p>
-                <p className="mt-2 text-2xl font-semibold">42</p>
-               <p className="mt-1 text-xs text-orange-500">8 due today</p>
+               <p className="mt-2 text-2xl font-semibold">{openTaskCount ?? 0}</p>
+               <p className="mt-1 text-xs text-orange-500">
+  {dueTodayCount ?? 0} due today
+</p>
               </div>
             </div>
 
@@ -191,7 +316,7 @@ return (
               <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 lg:col-span-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold">Today</h3>
+                    <h3 className="text-sm font-semibold">Tasks</h3>
                     <p className="mt-1 text-xs text-[#6B7280]">
                       Your current priorities
                     </p>
@@ -199,23 +324,7 @@ return (
                 </div>
 
                 <div className="mt-6 space-y-4">
-                  {[
-                    "Send proposal to client",
-                    "Create content for next week",
-                    "Review project timeline",
-                    "Explore new AI tools",
-                  ].map((task) => (
-                    <label
-                      key={task}
-                      className="flex items-center gap-3 text-sm"
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-[#D1D5DB]"
-                      />
-                      <span>{task}</span>
-                    </label>
-                  ))}
+                  <TaskList initialTasks={todayTasks ?? []} />
                 </div>
               </div>
 
