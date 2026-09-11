@@ -189,7 +189,7 @@ onChange={(e) => setClientEmail(e.target.value)}
   onClick={saveClient}
   className="rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#222222]"
 >
-  Save Changes
+  {editingClientId ? "Save Changes" : "Add Client"}
 </button>
     </div>
   </div>
