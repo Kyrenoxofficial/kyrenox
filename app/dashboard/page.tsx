@@ -138,7 +138,7 @@ const revenueGrowth =
   .select("id, title, completed, due_date")
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
-  .limit(4);
+  .limit(50);
 return (
     <main className="min-h-screen bg-[#F8F9FA] text-[#111111]">
       <div className="flex min-h-screen">
