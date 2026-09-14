@@ -160,7 +160,7 @@ function editClient(id: number) {
 </button>
 </div>
    {showForm && (
-  <div className="mt-8 max-w-xl rounded-lg border border-[#E5E7EB] bg-white p-6">
+  <div className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6">
     <h2 className="text-lg font-semibold text-[#111111]">
       New Client
     </h2>
@@ -184,13 +184,28 @@ onChange={(e) => setClientEmail(e.target.value)}
         className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
       />
 
+     <div className="flex gap-2"></div>
       <button
   type="button"
-  onClick={saveClient}
-  className="rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#222222]"
+  onClick={editingClientId ? saveClient : addClient}
+  className="mr-3 rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#222222]"
 >
   {editingClientId ? "Save Changes" : "Add Client"}
 </button>
+
+<button
+  type="button"
+  onClick={() => {
+    setShowForm(false);
+    setEditingClientId(null);
+    setClientName("");
+    setClientEmail("");
+  }}
+  className="rounded-md border border-[#D1D5DB] px-4 py-2 text-sm font-medium text-[#111111] transition hover:bg-[#F8F9FA]"
+>
+  Cancel
+</button>
+
     </div>
   </div>
 )} {clients.length > 0 && (
