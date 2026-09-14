@@ -28,6 +28,7 @@ export default async function TasksPage() {
     const title = String(formData.get("title") || "").trim();
     const dueDate = String(formData.get("due_date") || "").trim();
     const dueTime = String(formData.get("due_time") || "").trim();
+    const projectId = String(formData.get("project_id") || "").trim();
 
     if (!title) {
       return;
@@ -43,13 +44,14 @@ export default async function TasksPage() {
       redirect("/login");
     }
 
-    await supabase.from("tasks").insert({
-      user_id: user.id,
-      title,
-      due_date: dueDate
-  ? new Date(`${dueDate}T${dueTime || "23:59"}:00`).toISOString()
-  : null,
-    });
+   await supabase.from("tasks").insert({
+  user_id: user.id,
+  title,
+  due_date: dueDate
+    ? new Date(`${dueDate}T${dueTime || "23:59"}:00`).toISOString()
+    : null,
+  project_id: projectId ? Number(projectId) : null,
+});
 
     redirect("/dashboard?refresh=1");
   }
@@ -77,6 +79,12 @@ export default async function TasksPage() {
 
   redirect("/tasks");
 }
+
+const { data: projects } = await supabase
+  .from("projects")
+  .select("id, name")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false });
 
 const { data: tasks } = await supabase
   .from("tasks")
@@ -122,6 +130,30 @@ const { data: tasks } = await supabase
                 className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
               />
             </div>
+
+<div>
+  <label
+    htmlFor="project_id"
+    className="block text-sm font-medium text-[#111111]"
+  >
+    Project
+  </label>
+
+  <select
+    id="project_id"
+    name="project_id"
+    defaultValue=""
+    className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none focus:border-[#111111]"
+  >
+    <option value="">No project</option>
+
+    {projects?.map((project) => (
+      <option key={project.id} value={project.id}>
+        {project.name}
+      </option>
+    ))}
+  </select>
+</div>
 
             <div>
               <label

@@ -135,7 +135,7 @@ const revenueGrowth =
 
   const { data: todayTasks } = await supabase
   .from("tasks")
-  .select("id, title, completed, due_date")
+  .select("id, title, completed, due_date, project_id, project:projects(name)")
   .eq("user_id", user.id)
   .order("due_date", { ascending: true, nullsFirst: false })
   .limit(50);
