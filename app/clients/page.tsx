@@ -172,7 +172,7 @@ function editClient(id: number) {
         name="name"
         value={clientName}
 onChange={(e) => setClientName(e.target.value)}
-        className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-sm text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+        className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
       />
 
       <input
@@ -181,7 +181,7 @@ onChange={(e) => setClientName(e.target.value)}
         name="email"
         value={clientEmail}
 onChange={(e) => setClientEmail(e.target.value)}
-        className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-sm text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+        className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
       />
 
       <button
