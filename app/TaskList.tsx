@@ -153,7 +153,7 @@ function editTask(task: Task) {
  </div>
   </div>
 )}
-    <div className="max-h-80 overflow-y-auto pr-2">
+    <div className="max-h-[220px] overflow-y-auto pr-2">
   {tasks.map((task) => (
       <div
         key={task.id}
