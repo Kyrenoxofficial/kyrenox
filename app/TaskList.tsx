@@ -124,7 +124,7 @@ function editTask(task: Task) {
       value={taskTitle}
       onChange={(e) => setTaskTitle(e.target.value)}
       placeholder="Task title"
-      className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-sm text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+      className="w-full rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
     />
 
     <div className="mt-3 flex gap-3">
@@ -132,14 +132,14 @@ function editTask(task: Task) {
         type="date"
         value={taskDueDate}
         onChange={(e) => setTaskDueDate(e.target.value)}
-        className="rounded-md border border-[#D1D5DB] px-3 py-2 text-sm text-[#111111] outline-none focus:border-[#111111]"
+        className="rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] outline-none focus:border-[#111111]"
       />
 
       <input
         type="time"
         value={taskDueTime}
         onChange={(e) => setTaskDueTime(e.target.value)}
-        className="rounded-md border border-[#D1D5DB] px-3 py-2 text-sm text-[#111111] outline-none focus:border-[#111111]"
+        className="rounded-md border border-[#D1D5DB] px-3 py-2 text-base text-[#111111] outline-none focus:border-[#111111]"
       />
    <div className="mt-4">
   <button
@@ -153,7 +153,8 @@ function editTask(task: Task) {
  </div>
   </div>
 )}
-    {tasks.map((task) => (
+    <div className="max-h-80 overflow-y-auto pr-2">
+  {tasks.map((task) => (
       <div
         key={task.id}
         className="flex items-center justify-between text-sm"
@@ -215,9 +216,10 @@ function editTask(task: Task) {
 >
   <Trash2 className="h-4 w-4" />
 </button>
+</div> 
+</div> 
+))} 
+</div> 
 </div>
-      </div>
-    ))}
-  </div>
 );
 }
