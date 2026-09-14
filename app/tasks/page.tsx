@@ -119,7 +119,7 @@ const { data: tasks } = await supabase
                 type="text"
                 placeholder="e.g. Send proposal to client"
                 required
-                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
               />
             </div>
 
@@ -135,7 +135,7 @@ const { data: tasks } = await supabase
                 id="due_date"
                 name="due_date"
                 type="date"
-                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm text-[#111111] outline-none focus:border-[#111111]"
+                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none focus:border-[#111111]"
               />
               <div>
   <label
@@ -149,7 +149,7 @@ const { data: tasks } = await supabase
     id="due_time"
     name="due_time"
     type="time"
-    className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm text-[#111111] outline-none focus:border-[#111111]"
+    className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none focus:border-[#111111]"
   />
 </div>
             </div>
