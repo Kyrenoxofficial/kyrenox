@@ -169,6 +169,14 @@ function editClient(id: number) {
   setClientName(client.name);
   setClientEmail(client.email ?? "");
   setShowForm(true);
+
+setTimeout(() => {
+  document.getElementById("client-form")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+}, 0);
+
 }
   return (
     <main className="min-h-screen bg-[#F8F9FA] p-8">
@@ -195,7 +203,10 @@ function editClient(id: number) {
 </button>
 </div>
    {showForm && (
-  <div className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6">
+  <div
+    id="client-form"
+    className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6"
+  >
     <h2 className="text-lg font-semibold text-[#111111]">
       New Client
     </h2>
