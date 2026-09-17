@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 export default function ClientsPage() {
@@ -8,6 +8,7 @@ export default function ClientsPage() {
     const [editingClientId, setEditingClientId] = useState<number | null>(null);
     const [clientName, setClientName] = useState("");
 const [clientEmail, setClientEmail] = useState("");
+const formRef = useRef<HTMLDivElement>(null);
     const [clients, setClients] = useState<
   { id: number; name: string; email: string | null }[]
 >([]);
@@ -170,13 +171,15 @@ function editClient(id: number) {
   setClientEmail(client.email ?? "");
   setShowForm(true);
 
-setTimeout(() => {
-  document.getElementById("client-form")?.scrollIntoView({
+  setTimeout(() => {
+  formRef.current?.scrollIntoView({
     behavior: "smooth",
-    block: "start",
+    block: "center",
   });
 }, 0);
 
+
+  
 }
   return (
     <main className="min-h-screen bg-[#F8F9FA] p-8">
@@ -204,7 +207,7 @@ setTimeout(() => {
 </div>
    {showForm && (
   <div
-    id="client-form"
+    ref={formRef}
     className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6"
   >
     <h2 className="text-lg font-semibold text-[#111111]">
