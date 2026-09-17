@@ -30,6 +30,9 @@ export default function ProjectsPage() {
   { id: number; name: string }[]
 >([]);
 const [projectClientId, setProjectClientId] = useState("");
+const [projectTaskCounts, setProjectTaskCounts] = useState<
+  Record<number, { total: number; completed: number }>
+>({});
 
   useEffect(() => {
     async function loadProjects() {
@@ -56,6 +59,46 @@ const [projectClientId, setProjectClientId] = useState("");
 
 if (data) {
   setProjects(data);
+
+  if (data.length > 0) {
+    const projectIds = data.map((project) => project.id);
+
+    const { data: taskData, error: tasksError } = await supabase
+      .from("tasks")
+      .select("project_id, completed")
+      .eq("user_id", user.id)
+      .in("project_id", projectIds);
+
+    if (tasksError) {
+      console.error(tasksError);
+    } else {
+      const counts: Record<
+        number,
+        { total: number; completed: number }
+      > = {};
+
+      data.forEach((project) => {
+        counts[project.id] = {
+          total: 0,
+          completed: 0,
+        };
+      });
+
+      taskData?.forEach((task) => {
+        if (task.project_id !== null && counts[task.project_id]) {
+          counts[task.project_id].total += 1;
+
+          if (task.completed) {
+            counts[task.project_id].completed += 1;
+          }
+        }
+      });
+
+      setProjectTaskCounts(counts);
+    }
+  } else {
+    setProjectTaskCounts({});
+  }
 }
 
 setLoading(false);
@@ -363,6 +406,14 @@ useEffect(() => {
   <p className="truncate text-sm font-medium text-[#111111] md:text-base">
     {project.name}
   </p>
+
+{projectTaskCounts[project.id]?.total > 0 && (
+  <p className="mt-1 text-xs text-[#9CA3AF]">
+    {projectTaskCounts[project.id].completed} /{" "}
+    {projectTaskCounts[project.id].total} tasks completed
+  </p>
+)}
+
 </div>
 
                   <div className="flex shrink-0 items-center gap-4">
