@@ -11,6 +11,11 @@ const [clientEmail, setClientEmail] = useState("");
     const [clients, setClients] = useState<
   { id: number; name: string; email: string | null }[]
 >([]);
+
+const [projects, setProjects] = useState<
+  { id: number; name: string; client_id: number | null }[]
+>([]);
+
     const supabase = createClient();
     useEffect(() => {
   async function loadClients() {
@@ -33,6 +38,36 @@ const [clientEmail, setClientEmail] = useState("");
 
   loadClients();
 }, []);
+
+useEffect(() => {
+  async function loadProjects() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("projects")
+      .select("id, name, client_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      setProjects(data);
+    }
+  }
+
+  loadProjects();
+}, []);
+
     async function addClient() {
   const nameInput = document.querySelector<HTMLInputElement>('input[name="name"]');
   const emailInput = document.querySelector<HTMLInputElement>('input[name="email"]');
@@ -213,19 +248,35 @@ onChange={(e) => setClientEmail(e.target.value)}
     {clients.map((client) => (
       <div
         key={client.id}
-        className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm"
+       className="grid grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:grid-cols-[1fr_1fr_1.5fr_auto] sm:items-center"
       >
-        <p className="text-sm font-medium text-[#111111]">
-          {client.name}
-        </p>
+        <div className="min-w-0">
+  <p className="truncate text-sm font-medium text-[#111111]">
+    {client.name}
+  </p>
+</div>
 
-        {client.email && (
-          <p className="mt-1 text-sm text-[#9CA3AF]">
-            {client.email}
-          </p>
-        )}
-      
-      <div className="flex items-center gap-3">
+<div className="min-w-0">
+  {client.email && (
+    <p className="truncate text-sm text-[#9CA3AF]">
+      {client.email}
+    </p>
+  )}
+</div>
+
+<div className="min-w-0">
+  {projects.filter((project) => project.client_id === client.id).length > 0 && (
+    <p className="truncate text-sm text-[#6B7280]">
+      Projects:{" "}
+      {projects
+        .filter((project) => project.client_id === client.id)
+        .map((project) => project.name)
+        .join(", ")}
+    </p>
+  )}
+</div>
+
+<div className="flex items-center justify-end gap-3">
       <button
   type="button"
   onClick={() => editClient(client.id)}
