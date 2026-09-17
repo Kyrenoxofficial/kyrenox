@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 
@@ -15,6 +15,7 @@ type Project = {
 
 export default function ProjectsPage() {
   const supabase = createClient();
+  const formRef = useRef<HTMLDivElement>(null);
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,7 +162,14 @@ useEffect(() => {
   setProjectStatus(project.status);
   setProjectDescription(project.description ?? "");
   setProjectClientId(project.client_id?.toString() ?? "");
-  setShowForm(true);
+setShowForm(true);
+
+setTimeout(() => {
+  formRef.current?.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+}, 0);
 }
 
   async function saveProject() {
@@ -290,8 +298,11 @@ useEffect(() => {
 </div>
 
         {/* New / Edit Project Form */}
-       {showForm && (
-  <div className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6">
+      {showForm && (
+  <div
+    ref={formRef}
+    className="mt-8 max-w-xl mx-auto rounded-lg border border-[#E5E7EB] bg-white p-6"
+  >
     <h2 className="text-lg font-semibold text-[#111111]">
   {editingProjectId ? "Edit Project" : "New Project"}
 </h2>
