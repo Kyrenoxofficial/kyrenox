@@ -9,6 +9,7 @@ type Project = {
   name: string;
   status: string;
   description: string | null;
+  client_id: number | null;
   created_at: string;
 };
 
@@ -25,6 +26,10 @@ export default function ProjectsPage() {
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState("active");
   const [projectDescription, setProjectDescription] = useState("");
+  const [clients, setClients] = useState<
+  { id: number; name: string }[]
+>([]);
+const [projectClientId, setProjectClientId] = useState("");
 
   useEffect(() => {
     async function loadProjects() {
@@ -39,7 +44,7 @@ export default function ProjectsPage() {
 
       const { data, error } = await supabase
         .from("projects")
-        .select("id, name, status, description, created_at")
+        .select("id, name, status, description, client_id, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -59,11 +64,42 @@ setLoading(false);
     loadProjects();
   }, []);
 
+
+useEffect(() => {
+  async function loadClients() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("clients")
+      .select("id, name")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      setClients(data);
+    }
+  }
+
+  loadClients();
+}, []);
+
   function openNewProject() {
   setEditingProjectId(null);
   setProjectName("");
   setProjectStatus("active");
   setProjectDescription("");
+  setProjectClientId("");
   setShowForm(true);
 }
 
@@ -72,6 +108,7 @@ setLoading(false);
   setProjectName("");
   setProjectStatus("active");
   setProjectDescription("");
+  setProjectClientId("");
   setShowForm(false);
 }
 
@@ -80,6 +117,7 @@ setLoading(false);
   setProjectName(project.name);
   setProjectStatus(project.status);
   setProjectDescription(project.description ?? "");
+  setProjectClientId(project.client_id?.toString() ?? "");
   setShowForm(true);
 }
 
@@ -95,6 +133,7 @@ setLoading(false);
   name: projectName.trim(),
   status: projectStatus,
   description: projectDescription.trim() || null,
+  client_id: projectClientId ? Number(projectClientId) : null,
 })
         .eq("id", editingProjectId);
 
@@ -131,8 +170,9 @@ setLoading(false);
   name: projectName.trim(),
   status: projectStatus,
   description: projectDescription.trim() || null,
+  client_id: projectClientId ? Number(projectClientId) : null,
 })
-        .select("id, name, status, description, created_at")
+        .select("id, name, status, description, client_id, created_at")
         .single();
 
       if (error) {
@@ -230,6 +270,21 @@ setLoading(false);
   className="w-full resize-none rounded-md border border-[#D1D5DB] px-3 py-3 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
 />
 
+<select
+  value={projectClientId}
+  onChange={(e) => setProjectClientId(e.target.value)}
+  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-3 text-base text-[#111111] outline-none focus:border-[#111111]"
+>
+  <option value="">No client</option>
+
+  {clients.map((client) => (
+    <option key={client.id} value={client.id}>
+      {client.name}
+    </option>
+  ))}
+</select>
+
+
 
       <select
         value={projectStatus}
@@ -311,6 +366,16 @@ setLoading(false);
 </div>
 
                   <div className="flex shrink-0 items-center gap-4">
+
+{project.client_id && (
+  <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-medium text-[#6B7280]">
+    {clients.find((client) => client.id === project.client_id)?.name}
+  </span>
+)}
+
+
+
+
                     <span
   className={`rounded-full px-3 py-1 text-xs font-medium ${
     project.status === "active"

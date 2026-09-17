@@ -15,6 +15,12 @@ export default function ProjectPage() {
   name: string;
   status: string;
   description: string | null;
+  client_id: number | null;
+} | null>(null);
+
+const [client, setClient] = useState<{
+  id: number;
+  name: string;
 } | null>(null);
 
   const [tasks, setTasks] = useState<
@@ -87,7 +93,7 @@ async function addTaskToProject() {
 
       const { data, error } = await supabase
         .from("projects")
-        .select("id, name, status, description")
+        .select("id, name, status, description, client_id")
         .eq("id", Number(params.id))
         .eq("user_id", user.id)
         .single();
@@ -100,6 +106,25 @@ async function addTaskToProject() {
       if (data) {
         setProject(data);
       }
+
+
+      if (data?.client_id) {
+  const { data: clientData, error: clientError } = await supabase
+    .from("clients")
+    .select("id, name")
+    .eq("id", data.client_id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (clientError) {
+    console.error(clientError);
+    return;
+  }
+
+  if (clientData) {
+    setClient(clientData);
+  }
+}
 
 const { data: projectTasks, error: tasksError } = await supabase
   .from("tasks")
@@ -225,6 +250,8 @@ async function saveTask() {
   setShowEditForm(false);
 }
 
+  const completedTasks = tasks.filter((task) => task.completed).length;
+
   return (
     <main className="min-h-screen bg-[#F8F9FA] p-8">
       <a
@@ -262,6 +289,21 @@ async function saveTask() {
   <p className="mt-2 max-w-2xl text-sm text-[#6B7280]">
   {project?.description || "No description added yet."}
 </p>
+
+{client && (
+  <div className="mt-3">
+    <span className="inline-flex items-center rounded-md border border-[#D1D5DB] bg-white px-3 py-1.5 text-sm font-medium text-[#111111]">
+      Client: {client.name}
+    </span>
+  </div>
+)}
+
+{tasks.length > 0 && (
+  <p className="mt-3 text-sm text-[#6B7280]">
+    {completedTasks} / {tasks.length} tasks completed
+  </p>
+)}
+
 </div>
 
 
