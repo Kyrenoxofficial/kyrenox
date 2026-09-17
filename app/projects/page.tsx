@@ -274,16 +274,25 @@ setLoading(false);
             <div className="w-full space-y-3">
               {projects.map((project) => (
                 <div
-                  key={project.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm"
-                >
+  key={project.id}
+  role="link"
+  tabIndex={0}
+  onClick={() => {
+    window.location.href = `/projects/${project.id}`;
+  }}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      window.location.href = `/projects/${project.id}`;
+    }
+  }}
+  className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[#111111] md:text-base">
-                      {project.name}
-                    </p>
-
-                    
-                  </div>
+  <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+    {project.name}
+  </p>
+</div>
 
                   <div className="flex shrink-0 items-center gap-4">
                     <span
@@ -300,7 +309,10 @@ setLoading(false);
 
                     <button
                       type="button"
-                      onClick={() => editProject(project)}
+                      onClick={(e) => {
+  e.stopPropagation();
+  editProject(project);
+}}
                       className="text-[#9CA3AF] transition hover:text-[#111111]"
                       aria-label="Edit project"
                     >
@@ -309,7 +321,10 @@ setLoading(false);
 
                     <button
                       type="button"
-                      onClick={() => deleteProject(project.id)}
+                      onClick={(e) => {
+  e.stopPropagation();
+  deleteProject(project.id);
+}}
                       className="text-[#9CA3AF] transition hover:text-red-500"
                       aria-label="Delete project"
                     >
