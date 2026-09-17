@@ -8,6 +8,7 @@ type Project = {
   id: number;
   name: string;
   status: string;
+  description: string | null;
   created_at: string;
 };
 
@@ -23,6 +24,7 @@ export default function ProjectsPage() {
 
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState("active");
+  const [projectDescription, setProjectDescription] = useState("");
 
   useEffect(() => {
     async function loadProjects() {
@@ -37,7 +39,7 @@ export default function ProjectsPage() {
 
       const { data, error } = await supabase
         .from("projects")
-        .select("id, name, status, created_at")
+        .select("id, name, status, description, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -58,25 +60,28 @@ setLoading(false);
   }, []);
 
   function openNewProject() {
-    setEditingProjectId(null);
-    setProjectName("");
-    setProjectStatus("active");
-    setShowForm(true);
-  }
+  setEditingProjectId(null);
+  setProjectName("");
+  setProjectStatus("active");
+  setProjectDescription("");
+  setShowForm(true);
+}
 
   function closeForm() {
-    setEditingProjectId(null);
-    setProjectName("");
-    setProjectStatus("active");
-    setShowForm(false);
-  }
+  setEditingProjectId(null);
+  setProjectName("");
+  setProjectStatus("active");
+  setProjectDescription("");
+  setShowForm(false);
+}
 
   function editProject(project: Project) {
-    setEditingProjectId(project.id);
-    setProjectName(project.name);
-    setProjectStatus(project.status);
-    setShowForm(true);
-  }
+  setEditingProjectId(project.id);
+  setProjectName(project.name);
+  setProjectStatus(project.status);
+  setProjectDescription(project.description ?? "");
+  setShowForm(true);
+}
 
   async function saveProject() {
     if (!projectName.trim()) {
@@ -87,9 +92,10 @@ setLoading(false);
       const { error } = await supabase
         .from("projects")
         .update({
-          name: projectName.trim(),
-          status: projectStatus,
-        })
+  name: projectName.trim(),
+  status: projectStatus,
+  description: projectDescription.trim() || null,
+})
         .eq("id", editingProjectId);
 
       if (error) {
@@ -121,11 +127,12 @@ setLoading(false);
       const { data, error } = await supabase
         .from("projects")
         .insert({
-          user_id: user.id,
-          name: projectName.trim(),
-          status: projectStatus,
-        })
-        .select("id, name, status, created_at")
+  user_id: user.id,
+  name: projectName.trim(),
+  status: projectStatus,
+  description: projectDescription.trim() || null,
+})
+        .select("id, name, status, description, created_at")
         .single();
 
       if (error) {
@@ -214,6 +221,15 @@ setLoading(false);
         placeholder="Project name"
         className="w-full rounded-md border border-[#D1D5DB] px-3 py-3 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
       />
+
+<textarea
+  value={projectDescription}
+  onChange={(e) => setProjectDescription(e.target.value)}
+  placeholder="Project description"
+  rows={3}
+  className="w-full resize-none rounded-md border border-[#D1D5DB] px-3 py-3 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+/>
+
 
       <select
         value={projectStatus}

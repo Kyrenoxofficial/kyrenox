@@ -11,10 +11,11 @@ export default function ProjectPage() {
   const supabase = createClient();
 
   const [project, setProject] = useState<{
-    id: number;
-    name: string;
-    status: string;
-  } | null>(null);
+  id: number;
+  name: string;
+  status: string;
+  description: string | null;
+} | null>(null);
 
   const [tasks, setTasks] = useState<
   {
@@ -86,7 +87,7 @@ async function addTaskToProject() {
 
       const { data, error } = await supabase
         .from("projects")
-        .select("id, name, status")
+        .select("id, name, status, description")
         .eq("id", Number(params.id))
         .eq("user_id", user.id)
         .single();
@@ -258,9 +259,9 @@ async function saveTask() {
     )}
   </div>
 
-  <p className="mt-2 text-sm text-[#6B7280]">
-    Project details and tasks.
-  </p>
+  <p className="mt-2 max-w-2xl text-sm text-[#6B7280]">
+  {project?.description || "No description added yet."}
+</p>
 </div>
 
 
