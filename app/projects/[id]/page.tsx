@@ -256,10 +256,19 @@ async function saveTask() {
     <main className="min-h-screen bg-[#F8F9FA] p-8">
       <a
         href="/projects"
-        className="mb-6 inline-block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
+        className="mb-2 inline-block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
       >
         ← Back to Projects
       </a>
+
+      {client && (
+  <a
+    href={`/clients/${client.id}`}
+    className="mb-6 block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
+  >
+    ← Back to Client
+  </a>
+)}
 
       <div>
   <div className="flex items-center gap-3">
