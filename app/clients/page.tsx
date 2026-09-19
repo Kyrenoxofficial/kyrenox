@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
@@ -261,13 +262,24 @@ onChange={(e) => setClientEmail(e.target.value)}
   <div className="mt-8 w-full space-y-3">
     {clients.map((client) => (
       <div
-        key={client.id}
-       className="grid grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:grid-cols-[1fr_1fr_1.5fr_auto] sm:items-center"
-      >
+  key={client.id}
+  role="link"
+  tabIndex={0}
+  onClick={() => {
+    window.location.href = `/clients/${client.id}`;
+  }}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      window.location.href = `/clients/${client.id}`;
+    }
+  }}
+  className="grid cursor-pointer grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] sm:grid-cols-[1fr_1fr_1.5fr_auto] sm:items-center"
+>
         <div className="min-w-0">
   <p className="truncate text-sm font-medium text-[#111111]">
-    {client.name}
-  </p>
+  {client.name}
+</p>
 </div>
 
 <div className="min-w-0">
@@ -293,7 +305,10 @@ onChange={(e) => setClientEmail(e.target.value)}
 <div className="flex items-center justify-end gap-3">
       <button
   type="button"
-  onClick={() => editClient(client.id)}
+ onClick={(e) => {
+  e.stopPropagation();
+  editClient(client.id);
+}}
   className="text-[#9CA3AF] transition hover:text-[#111111]"
   aria-label="Edit client"
 >
@@ -302,7 +317,10 @@ onChange={(e) => setClientEmail(e.target.value)}
 
       <button
   type="button"
-  onClick={() => deleteClient(client.id)}
+ onClick={(e) => {
+  e.stopPropagation();
+  deleteClient(client.id);
+}}
   className="text-[#9CA3AF] transition hover:text-red-500"
   aria-label="Delete client"
 >

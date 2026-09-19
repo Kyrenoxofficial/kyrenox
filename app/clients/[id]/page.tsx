@@ -1,0 +1,220 @@
+"use client";
+
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { createClient } from "../../utils/client";
+
+
+type Client = {
+  id: number;
+  name: string;
+  email: string | null;
+};
+
+type Project = {
+  id: number;
+  name: string;
+  status: string;
+  description: string | null;
+  created_at: string;
+};
+
+export default function ClientDetailPage() {
+  const [client, setClient] = useState<Client | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadClientDetails() {
+      const supabase = createClient();
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const clientId = Number(window.location.pathname.split("/").pop());
+
+      if (!clientId) {
+        setLoading(false);
+        return;
+      }
+
+      const [{ data: clientData, error: clientError }, { data: projectData, error: projectError }] =
+        await Promise.all([
+          supabase
+            .from("clients")
+            .select("id, name, email")
+            .eq("id", clientId)
+            .eq("user_id", user.id)
+            .single(),
+
+          supabase
+            .from("projects")
+            .select("id, name, status, description, created_at")
+            .eq("client_id", clientId)
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+        ]);
+
+      if (clientError) {
+        console.error(clientError);
+        setLoading(false);
+        return;
+      }
+
+      if (projectError) {
+        console.error(projectError);
+      }
+
+      setClient(clientData);
+      setProjects(projectData ?? []);
+      setLoading(false);
+    }
+
+    loadClientDetails();
+  }, []);
+
+  function getStatusLabel(status: string) {
+    if (status === "completed") {
+      return "Completed";
+    }
+
+    if (status === "on_hold") {
+      return "On Hold";
+    }
+
+    return "Active";
+  }
+
+  function getStatusClasses(status: string) {
+    if (status === "completed") {
+      return "bg-[#DCFCE7] text-[#16A34A]";
+    }
+
+    if (status === "on_hold") {
+      return "bg-[#FEF3C7] text-[#D97706]";
+    }
+
+    return "bg-[#DBEAFE] text-[#2563EB]";
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#F8F9FA] p-8">
+        <p className="text-sm text-[#9CA3AF]">Loading client...</p>
+      </main>
+    );
+  }
+
+  if (!client) {
+    return (
+      <main className="min-h-screen bg-[#F8F9FA] p-8">
+        <Link
+          href="/clients"
+          className="mb-6 inline-block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
+        >
+          ← Back to Clients
+        </Link>
+
+        <div className="rounded-lg border border-[#E5E7EB] bg-white px-6 py-10 text-center">
+          <h1 className="text-lg font-semibold text-[#111111]">
+            Client not found
+          </h1>
+
+          <p className="mt-2 text-sm text-[#6B7280]">
+            This client could not be found.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#F8F9FA] p-8">
+      <Link
+        href="/clients"
+        className="mb-6 inline-block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
+      >
+        ← Back to Clients
+      </Link>
+
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#111111]">
+            {client.name}
+          </h1>
+
+          {client.email && (
+            <p className="mt-2 text-sm text-[#6B7280]">
+              {client.email}
+            </p>
+          )}
+        </div>
+
+        
+      </div>
+
+      <section className="mt-8">
+       <div className="flex items-center gap-2">
+  <h2 className="text-lg font-semibold text-[#111111]">
+    Projects
+  </h2>
+
+  <span className="text-sm text-[#9CA3AF]">
+    {projects.length}
+  </span>
+</div>
+
+        {projects.length === 0 ? (
+          <div className="mt-4 rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-10 text-center">
+            <h3 className="text-base font-medium text-[#111111]">
+              No projects yet
+            </h3>
+
+            <p className="mt-2 text-sm text-[#6B7280]">
+              This client is not connected to any projects yet.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {projects.map((project) => (
+              <Link
+                key={project.id}
+                href={`/projects/${project.id}`}
+                className="block rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+                      {project.name}
+                    </p>
+
+                    {project.description && (
+                      <p className="mt-1 truncate text-sm text-[#9CA3AF]">
+                        {project.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                      project.status
+                    )}`}
+                  >
+                    {getStatusLabel(project.status)}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
