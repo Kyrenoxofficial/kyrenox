@@ -25,6 +25,9 @@ export default function ClientDetailPage() {
   const [client, setClient] = useState<Client | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [projectTaskCounts, setProjectTaskCounts] = useState<
+  Record<number, { total: number; completed: number }>
+>({});
   const [editing, setEditing] = useState(false);
 const [editName, setEditName] = useState("");
 const [editEmail, setEditEmail] = useState("");
@@ -77,8 +80,49 @@ const [editEmail, setEditEmail] = useState("");
       }
 
       setClient(clientData);
-      setProjects(projectData ?? []);
-      setLoading(false);
+setProjects(projectData ?? []);
+
+const projectIds = (projectData ?? []).map((project) => project.id);
+
+if (projectIds.length > 0) {
+  const { data: taskData, error: tasksError } = await supabase
+    .from("tasks")
+    .select("project_id, completed")
+    .eq("user_id", user.id)
+    .in("project_id", projectIds);
+
+  if (tasksError) {
+    console.error(tasksError);
+  } else {
+    const counts: Record<
+      number,
+      { total: number; completed: number }
+    > = {};
+
+    projectIds.forEach((projectId) => {
+      counts[projectId] = {
+        total: 0,
+        completed: 0,
+      };
+    });
+
+    taskData?.forEach((task) => {
+      if (task.project_id !== null && counts[task.project_id]) {
+        counts[task.project_id].total += 1;
+
+        if (task.completed) {
+          counts[task.project_id].completed += 1;
+        }
+      }
+    });
+
+    setProjectTaskCounts(counts);
+  }
+} else {
+  setProjectTaskCounts({});
+}
+
+setLoading(false);
     }
 
     loadClientDetails();
@@ -288,6 +332,14 @@ async function saveClientChanges() {
                         {project.description}
                       </p>
                     )}
+
+{projectTaskCounts[project.id]?.total > 0 && (
+  <p className="mt-1 text-xs text-[#9CA3AF]">
+    {projectTaskCounts[project.id].completed} /{" "}
+    {projectTaskCounts[project.id].total} tasks completed
+  </p>
+)}
+
                   </div>
 
                   <span
