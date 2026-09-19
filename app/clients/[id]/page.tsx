@@ -2,6 +2,7 @@
 
 
 import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "../../utils/client";
 
@@ -24,6 +25,9 @@ export default function ClientDetailPage() {
   const [client, setClient] = useState<Client | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+const [editName, setEditName] = useState("");
+const [editEmail, setEditEmail] = useState("");
 
   useEffect(() => {
     async function loadClientDetails() {
@@ -79,6 +83,39 @@ export default function ClientDetailPage() {
 
     loadClientDetails();
   }, []);
+
+async function saveClientChanges() {
+  if (!client) {
+    return;
+  }
+
+  if (!editName.trim()) {
+    return;
+  }
+
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("clients")
+    .update({
+      name: editName.trim(),
+      email: editEmail.trim() || null,
+    })
+    .eq("id", client.id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setClient({
+    ...client,
+    name: editName.trim(),
+    email: editEmail.trim() || null,
+  });
+
+  setEditing(false);
+}
 
   function getStatusLabel(status: string) {
     if (status === "completed") {
@@ -144,21 +181,72 @@ export default function ClientDetailPage() {
         ← Back to Clients
       </Link>
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#111111]">
-            {client.name}
-          </h1>
+      {editing ? (
+  <div className="max-w-xl">
+    <div className="space-y-4">
+      <input
+        type="text"
+        value={editName}
+        onChange={(e) => setEditName(e.target.value)}
+        placeholder="Client name"
+        className="w-full rounded-md border border-[#D1D5DB] px-3 py-3 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+      />
 
-          {client.email && (
-            <p className="mt-2 text-sm text-[#6B7280]">
-              {client.email}
-            </p>
-          )}
-        </div>
+      <input
+        type="email"
+        value={editEmail}
+        onChange={(e) => setEditEmail(e.target.value)}
+        placeholder="Email"
+        className="w-full rounded-md border border-[#D1D5DB] px-3 py-3 text-base text-[#111111] placeholder:text-[#9CA3AF] outline-none focus:border-[#111111]"
+      />
+    </div>
 
-        
-      </div>
+    <div className="mt-4 flex gap-3">
+      <button
+        type="button"
+        onClick={saveClientChanges}
+        className="rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222]"
+      >
+        Save Changes
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setEditing(false)}
+        className="rounded-md border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#111111] transition hover:bg-[#F5F5F5]"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+) : (
+  <div>
+    <div className="flex items-center gap-4">
+      <h1 className="text-2xl font-semibold text-[#111111]">
+        {client.name}
+      </h1>
+
+      <button
+        type="button"
+        onClick={() => {
+          setEditName(client.name);
+          setEditEmail(client.email ?? "");
+          setEditing(true);
+        }}
+        className="text-[#9CA3AF] transition hover:text-[#111111]"
+        aria-label="Edit client"
+      >
+        <Pencil className="h-4 w-4" />
+      </button>
+    </div>
+
+    {client.email && (
+      <p className="mt-2 text-sm text-[#6B7280]">
+        {client.email}
+      </p>
+    )}
+  </div>
+)}
 
       <section className="mt-8">
        <div className="flex items-center gap-2">
