@@ -1,3 +1,5 @@
+
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../utils/supabase/server";
 
@@ -200,19 +202,20 @@ const { data: tasks } = await supabase
   <div className="mt-4 space-y-2">
     {tasks?.map((task) => (
       <div
-        key={task.id}
-        className="flex items-center justify-between rounded-lg border border-[#E5E7EB] bg-white px-4 py-3"
-      >
+  key={task.id}
+  
+  className="flex cursor-pointer items-center justify-between rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+>
         <span className="text-sm text-[#111111]">{task.title}</span>
 
         <form action={deleteTask}>
           <input type="hidden" name="id" value={task.id} />
-          <button
-            type="submit"
-            className="text-sm text-red-500 hover:text-red-600"
-          >
-            Delete
-          </button>
+         <button
+  type="submit"
+  className="text-sm text-red-500 hover:text-red-600"
+>
+  Delete
+</button>
         </form>
       </div>
     ))}

@@ -250,14 +250,24 @@ return (
     <div className="max-h-[220px] overflow-y-auto pr-2">
   {tasks.map((task) => (
       <div
-        key={task.id}
-        className="flex items-center justify-between border-b border-[#E5E7EB] py-3 text-sm last:border-b-0"
-      >
+  key={task.id}
+  role="link"
+  tabIndex={0}
+  onClick={() => router.push(`/tasks/${task.id}`)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      router.push(`/tasks/${task.id}`);
+    }
+  }}
+  className="flex cursor-pointer items-center justify-between border-b border-[#E5E7EB] py-3 text-sm last:border-b-0 transition hover:bg-[#FCFCFC]"
+>
         <label className="grid cursor-pointer grid-cols-[16px_1fr] items-start gap-3">
           <input
             type="checkbox"
             checked={task.completed}
             onChange={() => toggleTask(task.id, task.completed)}
+              onClick={(e) => e.stopPropagation()}
             className="mt-0.5 h-4 w-4 rounded border-[#D1D5DB]"
           />
 
@@ -307,7 +317,10 @@ return (
 
   <button
     type="button"
-    onClick={() => editTask(task)}
+    onClick={(e) => {
+  e.stopPropagation();
+  editTask(task);
+}}
     className="text-[#9CA3AF] transition hover:text-[#111111]"
     aria-label="Edit task"
   >
@@ -316,7 +329,10 @@ return (
 
   <button
     type="button"
-    onClick={() => deleteTask(task.id)}
+    onClick={(e) => {
+  e.stopPropagation();
+  deleteTask(task.id);
+}}
     className="text-[#9CA3AF] transition hover:text-red-500"
     aria-label="Delete task"
   >
