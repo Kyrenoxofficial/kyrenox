@@ -375,7 +375,7 @@ export default function ProposalsPage() {
         <button
           type="button"
           onClick={openNewProposal}
-          className="rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#222222]"
+          className="whitespace-nowrap rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222]"
         >
           + New Proposal
         </button>
