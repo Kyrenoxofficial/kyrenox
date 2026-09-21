@@ -172,7 +172,7 @@ const { data: tasks } = await supabase
                 className="mt-2 block h-11 w-full min-w-0 max-w-full appearance-none rounded-lg border border-[#E5E7EB] bg-white px-4 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
                 style={{ minWidth: 0 }}
               />
-              <div>
+              <div className="mt-4">
   <label
     htmlFor="due_time"
     className="block text-sm font-medium text-[#111111]"
