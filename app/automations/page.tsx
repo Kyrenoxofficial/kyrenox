@@ -489,7 +489,7 @@ export default function AutomationsPage() {
                     type="datetime-local"
                     value={lastRunAt}
                     onChange={(e) => setLastRunAt(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                   className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition..."
                   />
                 </div>
 
@@ -502,7 +502,7 @@ export default function AutomationsPage() {
                     type="datetime-local"
                     value={nextRunAt}
                     onChange={(e) => setNextRunAt(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition..."
                   />
                 </div>
               </div>
