@@ -9,6 +9,7 @@ import {
   Settings,
   Sparkles,
   Users,
+  Zap,
 } from "lucide-react";
 import MobileSidebar from "../MobileSidebar";
 import TaskList from "../TaskList";
@@ -194,6 +195,22 @@ return (
                 <FileText className="h-4 w-4" />
                 Proposals
               </a>
+
+<a
+  href="/content"
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+>
+  <FileText className="h-4 w-4" />
+  Content
+</a>
+
+<a
+  href="/automations"
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+>
+  <Zap className="h-4 w-4" />
+  Automations
+</a>
 
               <a
                 href="/analytics"

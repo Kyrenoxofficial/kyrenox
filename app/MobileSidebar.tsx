@@ -10,6 +10,7 @@ import {
   Sparkles,
   Users,
   X,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { createClient } from "./utils/client";
@@ -102,6 +103,24 @@ export default function MobileSidebar() {
                   <FileText className="h-4 w-4" />
                   Proposals
                 </a>
+
+                <a
+  href="/content"
+  onClick={() => setOpen(false)}
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+>
+  <FileText className="h-4 w-4" />
+  Content
+</a>
+
+<a
+  href="/automations"
+  onClick={() => setOpen(false)}
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+>
+  <Zap className="h-4 w-4" />
+  Automations
+</a>
 
                 <a
                   href="/analytics"
