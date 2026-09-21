@@ -169,7 +169,8 @@ const { data: tasks } = await supabase
                 id="due_date"
                 name="due_date"
                 type="date"
-                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none focus:border-[#111111]"
+                className="mt-2 block h-11 w-full min-w-0 max-w-full appearance-none rounded-lg border border-[#E5E7EB] bg-white px-4 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
+                style={{ minWidth: 0 }}
               />
               <div>
   <label
@@ -183,7 +184,8 @@ const { data: tasks } = await supabase
     id="due_time"
     name="due_time"
     type="time"
-    className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none focus:border-[#111111]"
+    className="mt-2 block h-11 w-full min-w-0 max-w-full appearance-none rounded-lg border border-[#E5E7EB] bg-white px-4 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
+    style={{ minWidth: 0 }}
   />
 </div>
             </div>
