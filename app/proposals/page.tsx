@@ -524,7 +524,6 @@ export default function ProposalsPage() {
                     setProposalValidUntil(e.target.value)
                   }
                   className="mt-2 block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] px-3 text-base text-[#111111] outline-none focus:border-[#111111]"
-                  style={{ minWidth: 0 }}
                 />
               </div>
             </div>
