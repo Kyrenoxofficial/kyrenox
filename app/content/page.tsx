@@ -323,7 +323,7 @@ export default function ContentPage() {
 
             <div className="mx-auto max-w-xl space-y-5">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Title
                 </label>
 
@@ -332,7 +332,7 @@ export default function ContentPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter a title"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
@@ -345,7 +345,7 @@ export default function ContentPage() {
                   <select
                     value={contentType}
                     onChange={(e) => setContentType(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     {contentTypes.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -356,14 +356,14 @@ export default function ContentPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Platform
                   </label>
 
                   <select
                     value={platform}
                     onChange={(e) => setPlatform(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     {platforms.map((item) => (
                       <option key={item.value} value={item.value}>
@@ -376,14 +376,14 @@ export default function ContentPage() {
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Status
                   </label>
 
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     {statuses.map((item) => (
                       <option key={item.value} value={item.value}>
@@ -394,7 +394,7 @@ export default function ContentPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Publish Date
                   </label>
 
@@ -402,21 +402,21 @@ export default function ContentPage() {
                     type="datetime-local"
                     value={publishAt}
                     onChange={(e) => setPublishAt(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Client
                   </label>
 
                   <select
                     value={clientId}
                     onChange={(e) => setClientId(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     <option value="">No client</option>
 
@@ -429,14 +429,14 @@ export default function ContentPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Project
                   </label>
 
                   <select
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     <option value="">No project</option>
 
@@ -450,7 +450,7 @@ export default function ContentPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Content
                 </label>
 
@@ -459,12 +459,12 @@ export default function ContentPage() {
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="Write your content here..."
                   rows={8}
-                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Notes
                 </label>
 
@@ -473,7 +473,7 @@ export default function ContentPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Optional notes"
                   rows={4}
-                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
