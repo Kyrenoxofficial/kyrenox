@@ -495,7 +495,7 @@ async function saveTask() {
 
     <button
   type="button"
-  onClick={() => setShowAddTaskForm(true)}
+  onClick={() => setShowAddTaskForm((current) => !current)}
   className="rounded-md bg-[#111111] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#222222]"
 >
   + Add Task

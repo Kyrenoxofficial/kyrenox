@@ -374,7 +374,7 @@ export default function ProposalsPage() {
 
         <button
           type="button"
-          onClick={openNewProposal}
+          onClick={() => setShowForm((current) => !current)}
           className="whitespace-nowrap rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222]"
         >
           + New Proposal
