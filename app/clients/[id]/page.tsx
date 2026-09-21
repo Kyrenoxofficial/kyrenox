@@ -21,9 +21,29 @@ type Project = {
   created_at: string;
 };
 
+type ContentItem = {
+  id: number;
+  title: string;
+  content_type: string;
+  platform: string;
+  status: string;
+  publish_at: string | null;
+};
+
+type Automation = {
+  id: number;
+  name: string;
+  tool: string;
+  status: string;
+  trigger: string | null;
+  action: string | null;
+};
+
 export default function ClientDetailPage() {
   const [client, setClient] = useState<Client | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+  const [automations, setAutomations] = useState<Automation[]>([]);
   const [loading, setLoading] = useState(true);
   const [projectTaskCounts, setProjectTaskCounts] = useState<
   Record<number, { total: number; completed: number }>
@@ -52,35 +72,67 @@ const [editEmail, setEditEmail] = useState("");
         return;
       }
 
-      const [{ data: clientData, error: clientError }, { data: projectData, error: projectError }] =
-        await Promise.all([
-          supabase
-            .from("clients")
-            .select("id, name, email")
-            .eq("id", clientId)
-            .eq("user_id", user.id)
-            .single(),
+     const [
+  { data: clientData, error: clientError },
+  { data: projectData, error: projectError },
+  { data: contentData, error: contentError },
+  { data: automationData, error: automationError },
+] = await Promise.all([
+  supabase
+    .from("clients")
+    .select("id, name, email")
+    .eq("id", clientId)
+    .eq("user_id", user.id)
+    .single(),
 
-          supabase
-            .from("projects")
-            .select("id, name, status, description, created_at")
-            .eq("client_id", clientId)
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false }),
-        ]);
+  supabase
+    .from("projects")
+    .select("id, name, status, description, created_at")
+    .eq("client_id", clientId)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false }),
 
-      if (clientError) {
-        console.error(clientError);
-        setLoading(false);
-        return;
-      }
+  supabase
+    .from("content_items")
+    .select("id, title, content_type, platform, status, publish_at")
+    .eq("client_id", clientId)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false }),
 
-      if (projectError) {
-        console.error(projectError);
-      }
+  supabase
+    .from("automations")
+    .select("id, name, tool, status, trigger, action")
+    .eq("client_id", clientId)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false }),
+]);
 
-      setClient(clientData);
+if (clientError) {
+  console.error(clientError);
+  setLoading(false);
+  return;
+}
+
+if (projectError) {
+  console.error(projectError);
+}
+
+if (contentError) {
+  console.error(contentError);
+}
+
+if (automationError) {
+  console.error(automationError);
+}
+
+setClient(clientData);
 setProjects(projectData ?? []);
+setContentItems(contentData ?? []);
+setAutomations(automationData ?? []);
+
+if (contentError) {
+  console.error(contentError);
+}
 
 const projectIds = (projectData ?? []).map((project) => project.id);
 
@@ -184,6 +236,53 @@ async function saveClientChanges() {
 
     return "bg-[#DBEAFE] text-[#2563EB]";
   }
+
+function getContentStatusLabel(status: string) {
+  if (status === "in_progress") return "In Progress";
+  if (status === "scheduled") return "Scheduled";
+  if (status === "published") return "Published";
+  if (status === "archived") return "Archived";
+  return "Draft";
+}
+
+function getContentStatusClasses(status: string) {
+  if (status === "published") {
+    return "bg-[#DCFCE7] text-[#16A34A]";
+  }
+
+  if (status === "scheduled") {
+    return "bg-[#DBEAFE] text-[#2563EB]";
+  }
+
+  if (status === "in_progress") {
+    return "bg-[#FEF3C7] text-[#D97706]";
+  }
+
+  return "bg-[#F3F4F6] text-[#6B7280]";
+}
+
+function getAutomationStatusLabel(status: string) {
+  if (status === "active") return "Active";
+  if (status === "paused") return "Paused";
+  if (status === "error") return "Error";
+  return "Draft";
+}
+
+function getAutomationStatusClasses(status: string) {
+  if (status === "active") {
+    return "bg-[#DBEAFE] text-[#2563EB]";
+  }
+
+  if (status === "paused") {
+    return "bg-[#FEF3C7] text-[#D97706]";
+  }
+
+  if (status === "error") {
+    return "bg-[#FEE2E2] text-[#DC2626]";
+  }
+
+  return "bg-[#F3F4F6] text-[#6B7280]";
+}
 
   if (loading) {
     return (
@@ -355,6 +454,142 @@ async function saveClientChanges() {
           </div>
         )}
       </section>
+
+<section className="mt-10">
+  <div className="flex items-center gap-2">
+    <h2 className="text-lg font-semibold text-[#111111]">
+      Content
+    </h2>
+
+    <span className="text-sm text-[#9CA3AF]">
+      {contentItems.length}
+    </span>
+  </div>
+
+  {contentItems.length === 0 ? (
+    <div className="mt-4 rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-10 text-center">
+      <h3 className="text-base font-medium text-[#111111]">
+        No content yet
+      </h3>
+
+      <p className="mt-2 text-sm text-[#6B7280]">
+        This client is not connected to any content yet.
+      </p>
+    </div>
+  ) : (
+    <div className="mt-4 space-y-3">
+      {contentItems.map((content) => (
+        <Link
+          key={content.id}
+          href={`/content/${content.id}`}
+          className="block rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+                {content.title}
+              </p>
+
+              <p className="mt-1 text-xs text-[#9CA3AF]">
+                {content.content_type === "post"
+                  ? "Post"
+                  : content.content_type === "thread"
+                  ? "Thread"
+                  : content.content_type === "video"
+                  ? "Video"
+                  : content.content_type === "article"
+                  ? "Article"
+                  : content.content_type === "newsletter"
+                  ? "Newsletter"
+                  : content.content_type}
+                {" • "}
+                {content.platform === "x"
+                  ? "X"
+                  : content.platform}
+              </p>
+            </div>
+
+            <span
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${getContentStatusClasses(
+                content.status
+              )}`}
+            >
+              {getContentStatusLabel(content.status)}
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  )}
+</section>
+
+
+<section className="mt-10">
+  <div className="flex items-center gap-2">
+    <h2 className="text-lg font-semibold text-[#111111]">
+      Automations
+    </h2>
+
+    <span className="text-sm text-[#9CA3AF]">
+      {automations.length}
+    </span>
+  </div>
+
+  {automations.length === 0 ? (
+    <div className="mt-4 rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-10 text-center">
+      <h3 className="text-base font-medium text-[#111111]">
+        No automations yet
+      </h3>
+
+      <p className="mt-2 text-sm text-[#6B7280]">
+        This client is not connected to any automations yet.
+      </p>
+    </div>
+  ) : (
+    <div className="mt-4 space-y-3">
+      {automations.map((automation) => (
+        <Link
+          key={automation.id}
+          href={`/automations/${automation.id}`}
+          className="block rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+                {automation.name}
+              </p>
+
+              <p className="mt-1 text-xs text-[#9CA3AF]">
+                {automation.tool}
+                {automation.trigger && (
+                  <>
+                    {" • "}
+                    {automation.trigger}
+                  </>
+                )}
+              </p>
+
+              {automation.action && (
+                <p className="mt-1 truncate text-xs text-[#6B7280]">
+                  Action: {automation.action}
+                </p>
+              )}
+            </div>
+
+            <span
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${getAutomationStatusClasses(
+                automation.status
+              )}`}
+            >
+              {getAutomationStatusLabel(automation.status)}
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  )}
+</section>
+
     </main>
   );
 }

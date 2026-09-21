@@ -13,11 +13,25 @@ type Project = {
   created_at: string;
 };
 
+type ContentItem = {
+  id: number;
+  title: string;
+  project_id: number | null;
+};
+
+type Automation = {
+  id: number;
+  name: string;
+  project_id: number | null;
+};
+
 export default function ProjectsPage() {
   const supabase = createClient();
   const formRef = useRef<HTMLDivElement>(null);
 
   const [projects, setProjects] = useState<Project[]>([]);
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+const [automations, setAutomations] = useState<Automation[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<number | null>(
@@ -136,6 +150,60 @@ useEffect(() => {
   }
 
   loadClients();
+}, []);
+
+useEffect(() => {
+  async function loadContent() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("content_items")
+      .select("id, title, project_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setContentItems(data ?? []);
+  }
+
+  loadContent();
+}, []);
+
+useEffect(() => {
+  async function loadAutomations() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("automations")
+      .select("id, name, project_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setAutomations(data ?? []);
+  }
+
+  loadAutomations();
 }, []);
 
   function openNewProject() {
@@ -411,7 +479,7 @@ setTimeout(() => {
       window.location.href = `/projects/${project.id}`;
     }
   }}
-  className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+  className="grid cursor-pointer grid-cols-1 gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] lg:grid-cols-[1.4fr_1fr_1fr_1fr_auto] lg:items-center"
 >
                   <div className="min-w-0 flex-1">
   <p className="truncate text-sm font-medium text-[#111111] md:text-base">
@@ -427,7 +495,33 @@ setTimeout(() => {
 
 </div>
 
-                  <div className="flex shrink-0 items-center gap-4">
+<div className="min-w-0">
+  <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+    Content
+  </p>
+
+  <p className="mt-1 truncate text-sm text-[#6B7280]">
+    {contentItems
+      .filter((item) => item.project_id === project.id)
+      .map((item) => item.title)
+      .join(", ") || "No content"}
+  </p>
+</div>
+
+<div className="min-w-0">
+  <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+    Automations
+  </p>
+
+  <p className="mt-1 truncate text-sm text-[#6B7280]">
+    {automations
+      .filter((item) => item.project_id === project.id)
+      .map((item) => item.name)
+      .join(", ") || "No automations"}
+  </p>
+</div>
+
+                  <div className="flex items-center justify-end gap-3">
 
 {project.client_id && (
   <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-medium text-[#6B7280]">

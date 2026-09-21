@@ -18,6 +18,14 @@ const [projects, setProjects] = useState<
   { id: number; name: string; client_id: number | null }[]
 >([]);
 
+const [contentItems, setContentItems] = useState<
+  { id: number; title: string; client_id: number | null }[]
+>([]);
+
+const [automations, setAutomations] = useState<
+  { id: number; name: string; client_id: number | null }[]
+>([]);
+
     const supabase = createClient();
     useEffect(() => {
   async function loadClients() {
@@ -68,6 +76,64 @@ useEffect(() => {
   }
 
   loadProjects();
+}, []);
+
+useEffect(() => {
+  async function loadContent() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("content_items")
+      .select("id, title, client_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      setContentItems(data);
+    }
+  }
+
+  loadContent();
+}, []);
+
+useEffect(() => {
+  async function loadAutomations() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("automations")
+      .select("id, name, client_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data) {
+      setAutomations(data);
+    }
+  }
+
+  loadAutomations();
 }, []);
 
     async function addClient() {
@@ -259,8 +325,18 @@ onChange={(e) => setClientEmail(e.target.value)}
     </div>
   </div>
 )} {clients.length > 0 && (
-  <div className="mt-8 w-full space-y-3">
-    {clients.map((client) => (
+  <div className="mt-8 w-full">
+    <div className="mb-2 hidden sm:grid sm:grid-cols-[1fr_1fr_1.2fr_1.2fr_1.2fr_auto] px-4 text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+  <span>Name</span>
+  <span>Email</span>
+  <span>Projects</span>
+  <span>Content</span>
+  <span>Automations</span>
+  <span className="text-right">Actions</span>
+</div>
+
+<div className="space-y-3">
+  {clients.map((client) => (
       <div
   key={client.id}
   role="link"
@@ -274,7 +350,7 @@ onChange={(e) => setClientEmail(e.target.value)}
       window.location.href = `/clients/${client.id}`;
     }
   }}
-  className="grid cursor-pointer grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] sm:grid-cols-[1fr_1fr_1.5fr_auto] sm:items-center"
+  className="grid cursor-pointer grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] sm:grid-cols-[1fr_1fr_1.2fr_1.2fr_1.2fr_auto] sm:items-center"
 >
         <div className="min-w-0">
   <p className="truncate text-sm font-medium text-[#111111]">
@@ -297,6 +373,30 @@ onChange={(e) => setClientEmail(e.target.value)}
       {projects
         .filter((project) => project.client_id === client.id)
         .map((project) => project.name)
+        .join(", ")}
+    </p>
+  )}
+</div>
+
+<div className="min-w-0">
+  {contentItems.filter((item) => item.client_id === client.id).length > 0 && (
+    <p className="truncate text-sm text-[#6B7280]">
+      Content:{" "}
+      {contentItems
+        .filter((item) => item.client_id === client.id)
+        .map((item) => item.title)
+        .join(", ")}
+    </p>
+  )}
+</div>
+
+<div className="min-w-0">
+  {automations.filter((item) => item.client_id === client.id).length > 0 && (
+    <p className="truncate text-sm text-[#6B7280]">
+      Automations:{" "}
+      {automations
+        .filter((item) => item.client_id === client.id)
+        .map((item) => item.name)
         .join(", ")}
     </p>
   )}
@@ -329,6 +429,7 @@ onChange={(e) => setClientEmail(e.target.value)}
 </div>
     ))}
   </div>
+</div>
 )}
 </main>
   );
