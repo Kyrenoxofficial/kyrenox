@@ -402,7 +402,7 @@ export default function ContentPage() {
                     type="datetime-local"
                     value={publishAt}
                     onChange={(e) => setPublishAt(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+                   className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition..."
                   />
                 </div>
               </div>
