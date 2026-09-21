@@ -344,7 +344,7 @@ export default function AutomationsPage() {
 
             <div className="space-y-5">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Name
                 </label>
 
@@ -353,20 +353,20 @@ export default function AutomationsPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter an automation name"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Tool
                   </label>
 
                   <select
                     value={tool}
                     onChange={(e) => setTool(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     {tools.map((item) => (
                       <option key={item.value} value={item.value}>
@@ -377,14 +377,14 @@ export default function AutomationsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Status
                   </label>
 
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     {statuses.map((item) => (
                       <option key={item.value} value={item.value}>
@@ -396,7 +396,7 @@ export default function AutomationsPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Trigger
                 </label>
 
@@ -405,12 +405,12 @@ export default function AutomationsPage() {
                   value={trigger}
                   onChange={(e) => setTrigger(e.target.value)}
                   placeholder="e.g. New client created"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Action
                 </label>
 
@@ -419,12 +419,12 @@ export default function AutomationsPage() {
                   value={action}
                   onChange={(e) => setAction(e.target.value)}
                   placeholder="e.g. Send welcome email"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Description
                 </label>
 
@@ -433,20 +433,20 @@ export default function AutomationsPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe what this automation does..."
                   rows={4}
-                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Client
                   </label>
 
                   <select
                     value={clientId}
                     onChange={(e) => setClientId(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     <option value="">No client</option>
 
@@ -459,14 +459,14 @@ export default function AutomationsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Project
                   </label>
 
                   <select
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
                     <option value="">No project</option>
 
@@ -481,7 +481,7 @@ export default function AutomationsPage() {
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Last Run
                   </label>
 
@@ -489,12 +489,12 @@ export default function AutomationsPage() {
                     type="datetime-local"
                     value={lastRunAt}
                     onChange={(e) => setLastRunAt(e.target.value)}
-                   className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition..."
+                   className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition..."
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
                     Next Run
                   </label>
 
@@ -502,13 +502,13 @@ export default function AutomationsPage() {
                     type="datetime-local"
                     value={nextRunAt}
                     onChange={(e) => setNextRunAt(e.target.value)}
-                    className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition..."
+                    className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition..."
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                <label className="mb-1.5 block text-base font-medium text-[#111111]">
                   Notes
                 </label>
 
@@ -517,7 +517,7 @@ export default function AutomationsPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Optional notes"
                   rows={4}
-                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                 />
               </div>
 
