@@ -366,41 +366,60 @@ onChange={(e) => setClientEmail(e.target.value)}
   )}
 </div>
 
-{projects.filter((project) => project.client_id === client.id).length > 0 && (
-  <div className="min-w-0">
-    <p className="truncate text-sm text-[#6B7280]">
-      Projects:{" "}
-      {projects
-        .filter((project) => project.client_id === client.id)
-        .map((project) => project.name)
-        .join(", ")}
-    </p>
-  </div>
-)}
+{(() => {
+  const clientProjects = projects.filter(
+    (project) => project.client_id === client.id
+  );
 
-{contentItems.filter((item) => item.client_id === client.id).length > 0 && (
-  <div className="min-w-0">
-    <p className="truncate text-sm text-[#6B7280]">
-      Content:{" "}
-      {contentItems
-        .filter((item) => item.client_id === client.id)
-        .map((item) => item.title)
-        .join(", ")}
-    </p>
-  </div>
-)}
+  return (
+    <div className={clientProjects.length > 0 ? "min-w-0" : "hidden sm:block"}>
+      {clientProjects.length > 0 && (
+        <p className="truncate text-sm text-[#6B7280]">
+          Projects:{" "}
+          {clientProjects.map((project) => project.name).join(", ")}
+        </p>
+      )}
+    </div>
+  );
+})()}
 
-{automations.filter((item) => item.client_id === client.id).length > 0 && (
-  <div className="min-w-0">
-    <p className="truncate text-sm text-[#6B7280]">
-      Automations:{" "}
-      {automations
-        .filter((item) => item.client_id === client.id)
-        .map((item) => item.name)
-        .join(", ")}
-    </p>
-  </div>
-)}
+{(() => {
+  const clientContent = contentItems.filter(
+    (item) => item.client_id === client.id
+  );
+
+  return (
+    <div className={clientContent.length > 0 ? "min-w-0" : "hidden sm:block"}>
+      {clientContent.length > 0 && (
+        <p className="truncate text-sm text-[#6B7280]">
+          Content:{" "}
+          {clientContent.map((item) => item.title).join(", ")}
+        </p>
+      )}
+    </div>
+  );
+})()}
+
+{(() => {
+  const clientAutomations = automations.filter(
+    (item) => item.client_id === client.id
+  );
+
+  return (
+    <div
+      className={
+        clientAutomations.length > 0 ? "min-w-0" : "hidden sm:block"
+      }
+    >
+      {clientAutomations.length > 0 && (
+        <p className="truncate text-sm text-[#6B7280]">
+          Automations:{" "}
+          {clientAutomations.map((item) => item.name).join(", ")}
+        </p>
+      )}
+    </div>
+  );
+})()}
 
 <div className="flex items-center justify-end gap-3">
       <button
