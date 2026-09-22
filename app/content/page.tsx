@@ -282,7 +282,7 @@ export default function ContentPage() {
   ← Back to Dashboard
 </a>
 
-        <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-[#111111]">
               Content
