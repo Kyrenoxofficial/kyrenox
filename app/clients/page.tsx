@@ -350,7 +350,7 @@ onChange={(e) => setClientEmail(e.target.value)}
       window.location.href = `/clients/${client.id}`;
     }
   }}
-  className="grid cursor-pointer grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] sm:grid-cols-[1fr_1fr_1.2fr_1.2fr_1.2fr_auto] sm:items-center"
+  className="grid cursor-pointer grid-cols-1 gap-3 rounded-lg border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC] sm:grid-cols-[1fr_1fr_1.2fr_1.2fr_1.2fr_auto] sm:items-center"
 >
         <div className="min-w-0">
   <p className="truncate text-sm font-medium text-[#111111]">
@@ -366,8 +366,8 @@ onChange={(e) => setClientEmail(e.target.value)}
   )}
 </div>
 
-<div className="min-w-0">
-  {projects.filter((project) => project.client_id === client.id).length > 0 && (
+{projects.filter((project) => project.client_id === client.id).length > 0 && (
+  <div className="min-w-0">
     <p className="truncate text-sm text-[#6B7280]">
       Projects:{" "}
       {projects
@@ -375,11 +375,11 @@ onChange={(e) => setClientEmail(e.target.value)}
         .map((project) => project.name)
         .join(", ")}
     </p>
-  )}
-</div>
+  </div>
+)}
 
-<div className="min-w-0">
-  {contentItems.filter((item) => item.client_id === client.id).length > 0 && (
+{contentItems.filter((item) => item.client_id === client.id).length > 0 && (
+  <div className="min-w-0">
     <p className="truncate text-sm text-[#6B7280]">
       Content:{" "}
       {contentItems
@@ -387,11 +387,11 @@ onChange={(e) => setClientEmail(e.target.value)}
         .map((item) => item.title)
         .join(", ")}
     </p>
-  )}
-</div>
+  </div>
+)}
 
-<div className="min-w-0">
-  {automations.filter((item) => item.client_id === client.id).length > 0 && (
+{automations.filter((item) => item.client_id === client.id).length > 0 && (
+  <div className="min-w-0">
     <p className="truncate text-sm text-[#6B7280]">
       Automations:{" "}
       {automations
@@ -399,8 +399,8 @@ onChange={(e) => setClientEmail(e.target.value)}
         .map((item) => item.name)
         .join(", ")}
     </p>
-  )}
-</div>
+  </div>
+)}
 
 <div className="flex items-center justify-end gap-3">
       <button
