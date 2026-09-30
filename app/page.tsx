@@ -479,13 +479,19 @@ export default function Home() {
     </p>
   </div>
 
-  <div className="mt-28 flex justify-center">
- <div className="w-[calc(100%+80px)] max-w-[950px] -ml-[40px] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)] md:ml-0 md:w-full">
-    <img
-      src="/prompt-library-showcase.png"
-      alt="Kyrenox Prompt Library"
-      className="block h-auto w-full"
-    />
+ <div className="mt-28 flex justify-center">
+  <div className="w-full max-w-[950px] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)]">
+    <picture>
+      <source
+        media="(max-width: 767px)"
+        srcSet="/prompt-library-showcase-mobile.png"
+      />
+      <img
+        src="/prompt-library-showcase.png"
+        alt="Kyrenox Prompt Library"
+        className="block h-auto w-full"
+      />
+    </picture>
   </div>
 </div>
 </section>

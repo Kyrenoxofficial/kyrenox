@@ -60,7 +60,7 @@ window.location.href = "/login";
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-[#111111]"
+                className="block text-base font-medium text-[#111111]"
               >
                 Email
               </label>
@@ -76,7 +76,7 @@ window.location.href = "/login";
             <div className="mt-6">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-[#111111]"
+                className="block text-base font-medium text-[#111111]"
               >
                 Password
               </label>

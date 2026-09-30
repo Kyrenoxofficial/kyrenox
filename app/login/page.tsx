@@ -63,7 +63,7 @@ router.push("/dashboard");
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-[#111111]"
+                className="block text-base font-medium text-[#111111]"
               >
                 Email
               </label>
@@ -80,7 +80,7 @@ router.push("/dashboard");
             <div className="mt-6">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-[#111111]"
+                className="block text-base font-medium text-[#111111]"
               >
                 Password
               </label>
