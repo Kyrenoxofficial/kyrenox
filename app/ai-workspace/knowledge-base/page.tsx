@@ -234,15 +234,7 @@ export default function KnowledgeBasePage() {
               </p>
             </div>
 
-            {editingId !== null && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="shrink-0 text-sm text-[#9CA3AF] transition hover:text-[#111111]"
-              >
-                Cancel
-              </button>
-            )}
+            
           </div>
 
           <div className="mt-5 space-y-4">
