@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "../utils/supabase/server";
 import {
   BarChart3,
@@ -352,21 +353,30 @@ return (
                 </p>
 
                 <div className="mt-5 space-y-2">
-                  <button className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]">
-                    <FolderKanban className="h-4 w-4" />
-                    New Project
-                  </button>
+  <Link
+  href="/projects?new=true"
+  className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]"
+>
+  <FolderKanban className="h-4 w-4" />
+  New Project
+</Link>
 
-                  <button className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]">
-                    <FileText className="h-4 w-4" />
-                    New Proposal
-                  </button>
+  <Link
+  href="/proposals?new=true"
+  className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]"
+>
+  <FileText className="h-4 w-4" />
+  New Proposal
+</Link>
 
-                  <button className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]">
-                    <Sparkles className="h-4 w-4" />
-                    Open AI Workspace
-                  </button>
-                </div>
+  <Link
+    href="/ai-workspace"
+    className="flex w-full items-center gap-3 rounded-lg border border-[#E5E7EB] px-4 py-3 text-left text-sm hover:bg-[#F8F9FA]"
+  >
+    <Sparkles className="h-4 w-4" />
+    Open AI Workspace
+  </Link>
+</div>
               </div>
             </div>
           </div>

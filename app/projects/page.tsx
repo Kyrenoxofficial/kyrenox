@@ -206,7 +206,20 @@ useEffect(() => {
   loadAutomations();
 }, []);
 
-  function openNewProject() {
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("new") === "true") {
+    setEditingProjectId(null);
+    setProjectName("");
+    setProjectStatus("active");
+    setProjectDescription("");
+    setProjectClientId("");
+    setShowForm(true);
+  }
+}, []);
+
+function openNewProject() {
   setEditingProjectId(null);
   setProjectName("");
   setProjectStatus("active");

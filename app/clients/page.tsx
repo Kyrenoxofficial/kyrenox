@@ -136,6 +136,19 @@ useEffect(() => {
   loadAutomations();
 }, []);
 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("new") === "true") {
+    setEditingClientId(null);
+    setClientName("");
+    setClientEmail("");
+    setShowForm(true);
+  }
+}, []);
+
+
+
     async function addClient() {
   const nameInput = document.querySelector<HTMLInputElement>('input[name="name"]');
   const emailInput = document.querySelector<HTMLInputElement>('input[name="email"]');

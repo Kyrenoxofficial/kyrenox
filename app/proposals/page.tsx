@@ -104,6 +104,24 @@ export default function ProposalsPage() {
     loadData();
   }, []);
 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("new") === "true") {
+    setEditingProposalId(null);
+    setProposalTitle("");
+    setProposalClientId("");
+    setProposalProjectId("");
+    setProposalStatus("draft");
+    setProposalAmount("");
+    setProposalValidUntil("");
+    setProposalContent("");
+    setShowForm(true);
+  }
+}, []);
+
+
+
   function openNewProposal() {
     setEditingProposalId(null);
     setProposalTitle("");
