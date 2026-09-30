@@ -72,7 +72,7 @@ router.push("/dashboard");
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
               />
             </div>
 
@@ -90,7 +90,7 @@ router.push("/dashboard");
     id="password"
     type={showPassword ? "text" : "password"}
     placeholder="Enter your password"
-    className="h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 pr-11 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+    className="h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 pr-11 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
   />
 
   <button
