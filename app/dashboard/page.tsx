@@ -226,12 +226,12 @@ return (
             </p>
 
             <a
-              href="/ai"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-            >
-              <Sparkles className="h-4 w-4" />
-              AI Workspace
-            </a>
+  href="/ai-workspace"
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+>
+  <Sparkles className="h-4 w-4" />
+  AI Workspace
+</a>
           </nav>
 
           <div className="border-t border-[#E5E7EB] p-4">

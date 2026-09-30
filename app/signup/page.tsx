@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { createClient } from "../utils/client";
 
 const supabase = createClient();
 
 export default function SignupPage() {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <main className="min-h-screen bg-[#F8F9FA] px-6 py-12">
       <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-6xl flex-col items-center justify-center">
@@ -78,12 +81,27 @@ window.location.href = "/login";
                 Password
               </label>
 
-              <input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                className="mt-2 h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
-              />
+              <div className="relative mt-2">
+  <input
+    id="password"
+    type={showPassword ? "text" : "password"}
+    placeholder="Create a password"
+    className="h-11 w-full rounded-lg border border-[#E5E7EB] bg-white px-4 pr-11 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowPassword((value) => !value)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition hover:text-[#111111]"
+    aria-label={showPassword ? "Hide password" : "Show password"}
+  >
+    {showPassword ? (
+      <EyeOff className="h-4 w-4" />
+    ) : (
+      <Eye className="h-4 w-4" />
+    )}
+  </button>
+</div>
             </div>
 
             <button

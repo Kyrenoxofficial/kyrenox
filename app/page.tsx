@@ -480,105 +480,14 @@ export default function Home() {
   </div>
 
   <div className="mt-28 flex justify-center">
-    <div className="w-full max-w-[462px] overflow-hidden rounded-[13px] bg-[#191919] shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
-      <div className="px-3 pb-2 pt-3">
-        <div className="flex items-center gap-2">
-          <svg
-  width="20"
-  height="20"
-  viewBox="0 0 20 20"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
-  className="shrink-0"
->
-  <path
-    d="M10 2.2C6.7 2.2 4.3 4.6 4.3 7.6C4.3 9.8 5.5 11.5 7.1 12.4C6.4 13.2 6 14.3 6 15.5C6 16.8 7.1 17.8 8.4 17.8H11.6C12.9 17.8 14 16.8 14 15.5C14 14.3 13.6 13.2 12.9 12.4C14.5 11.5 15.7 9.8 15.7 7.6C15.7 4.6 13.3 2.2 10 2.2Z"
-    stroke="#D8D8D8"
-    strokeWidth="1.4"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
-  <path
-    d="M7.2 7.1C7.2 6.1 8 5.4 9 5.4C9.5 5.4 9.9 5.6 10.2 6C10.5 5.6 11 5.4 11.5 5.4C12.5 5.4 13.2 6.1 13.2 7.1C13.2 7.7 12.9 8.2 12.5 8.5C12.9 8.8 13.2 9.3 13.2 9.9C13.2 10.9 12.4 11.6 11.4 11.6C10.9 11.6 10.5 11.4 10.2 11C9.9 11.4 9.5 11.6 9 11.6C8 11.6 7.2 10.9 7.2 9.9C7.2 9.3 7.5 8.8 7.9 8.5C7.5 8.2 7.2 7.7 7.2 7.1Z"
-    stroke="#D8D8D8"
-    strokeWidth="1.2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />
-</svg>
-          <span className="text-[23px] font-semibold text-[#E8E8E8]">
-            Prompt Library
-          </span>
-        </div>
-
-        <div className="mt-2 flex items-center gap-5 text-[9px] text-[#BDBDBD]">
-          <span className="rounded-md bg-[#303030] px-2 py-1 text-white">
-            ▦ &nbsp; All prompts
-          </span>
-          <span>▥ &nbsp; By Category</span>
-          <span>▦ &nbsp; Ready</span>
-          <span className="ml-auto">☰</span>
-        </div>
-
-        <div className="mt-2 grid grid-cols-[1fr_145px_70px] border-b border-[#303030] pb-2 text-[9px] text-[#8D8D8D]">
-          <span>Prompt</span>
-          <span>◉ &nbsp; Category</span>
-          <span>◉ &nbsp; Quality check</span>
-        </div>
-
-        <div className="divide-y divide-[#292929] text-[9px] text-[#D0D0D0]">
-          {[
-            "Proposal: Project Plan + RACI in 5 Minutes",
-            "Automation: Deal Won → Project Setup",
-            "Lead Gen: LinkedIn Search Strings for Target",
-            "Client Comms: Project Status (Red/Yellow/Green)",
-            "Client Comms: Create Kickoff Agenda",
-            "Client Comms: Summarize Feedback",
-            "Client Comms: Review Request (Deadline)",
-            "Content: How-to Framework Post",
-            "Lead Gen: Discovery Call Qualifier",
-            "Proposal: Deliverables + Acceptance Criteria",
-            "Content: Post aus Kundenfrage",
-            "Lead Gen: Trigger-Based Outreach List",
-          ].map((prompt, index) => (
-            <div
-              key={prompt}
-              className="grid h-[27px] grid-cols-[1fr_145px_70px] items-center"
-            >
-              <span className="truncate pr-2">
-                <span className="mr-2 inline-flex text-[#35A76A]">
-  {index % 3 === 0 ? (
-    <Lightbulb className="h-3 w-3" strokeWidth={1.8} />
-  ) : index % 3 === 1 ? (
-    <Zap className="h-3 w-3" strokeWidth={1.8} />
-  ) : index % 3 === 2 ? (
-    <Target className="h-3 w-3" strokeWidth={1.8} />
-  ) : (
-    <MessageCircle className="h-3 w-3" strokeWidth={1.8} />
-  )}
-</span>
-                {prompt}
-              </span>
-
-              <span>
-                {(index === 7 || index === 10) && (
-                  <span className="rounded bg-[#4A4A4A] px-2 py-1 text-[8px] text-[#D5D5D5]">
-                    Content
-                  </span>
-                )}
-              </span>
-
-              <span>
-                <span className="rounded bg-[#356B50] px-2 py-1 text-[8px] font-medium text-[#BFE5CF]">
-                  Ready
-                </span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+  <div className="w-full max-w-[950px] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)]">
+    <img
+      src="/prompt-library-showcase.png"
+      alt="Kyrenox Prompt Library"
+      className="block h-auto w-full"
+    />
   </div>
+</div>
 </section>
 <section className="mx-auto max-w-6xl px-8 py-24 md:px-12">
   <div>
