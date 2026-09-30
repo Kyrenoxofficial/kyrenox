@@ -480,7 +480,7 @@ export default function Home() {
   </div>
 
   <div className="mt-28 flex justify-center">
-  <div className="w-full max-w-[950px] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)]">
+  <div className="w-[92%] max-w-[950px] overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_18px_40px_rgba(0,0,0,0.10)] md:w-full">
     <img
       src="/prompt-library-showcase.png"
       alt="Kyrenox Prompt Library"
