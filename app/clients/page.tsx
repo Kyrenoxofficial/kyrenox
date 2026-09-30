@@ -185,9 +185,31 @@ useEffect(() => {
 
 if (data) {
   setClients((currentClients) => [...currentClients, data]);
+
+  try {
+    const response = await fetch("/api/automations/trigger", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event: "client.created",
+        clientId: data.id,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(
+        "Client automation failed:",
+        await response.text()
+      );
+    }
+  } catch (error) {
+    console.error("Client automation request failed:", error);
+  }
 }
 
-  setShowForm(false);
+setShowForm(false);
 }
 async function deleteClient(id: number) {
   const { error } = await supabase
