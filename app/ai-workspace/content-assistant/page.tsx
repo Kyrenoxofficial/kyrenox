@@ -16,6 +16,8 @@ export default function ContentAssistantPage() {
 const [generating, setGenerating] = useState(false);
 const [saving, setSaving] = useState(false);
 const [saved, setSaved] = useState(false);
+const [generateError, setGenerateError] = useState("");
+const [saveError, setSaveError] = useState("");
 
 const [knowledgeItems, setKnowledgeItems] = useState<
   { title: string; category: string; content: string }[]
@@ -42,52 +44,109 @@ useEffect(() => {
   loadKnowledge();
 }, []);
 
-  async function generateDraft() {
+function hasLowInformation(value: string, minLength: number) {
+  const normalized = value.trim();
+
+  if (!normalized || normalized.length < minLength) {
+    return true;
+  }
+
+  if (/^(.)\1+$/.test(normalized)) {
+    return true;
+  }
+
+  return false;
+}
+
+ async function generateDraft() {
   setGenerating(true);
   setSaved(false);
+  setDraft("");
+  setGenerateError("");
+
+  const titleIsWeak = hasLowInformation(title, 3);
+  const ideaIsWeak = hasLowInformation(idea, 10);
+
+  if (titleIsWeak || ideaIsWeak) {
+    setGenerateError(
+      "Please provide a meaningful title and content idea before generating."
+    );
+    setGenerating(false);
+    return;
+  }
 
   try {
+    const projectText = `${title} ${idea}`.toLowerCase();
+
+    const relevantKnowledgeItems = knowledgeItems.filter((item) => {
+      const knowledgeText =
+        `${item.title} ${item.category} ${item.content}`.toLowerCase();
+
+      const projectWords = projectText
+        .split(/\W+/)
+        .filter((word) => word.length >= 4);
+
+      return projectWords.some((word) => knowledgeText.includes(word));
+    });
+
+    const knowledgeBaseText =
+      relevantKnowledgeItems.length > 0
+        ? relevantKnowledgeItems
+            .slice(0, 10)
+            .map(
+              (item) =>
+                `${item.category} - ${item.title}:\n${item.content}`
+            )
+            .join("\n\n")
+        : "No directly relevant knowledge provided.";
+
     const prompt = `
 Create a professional piece of content for a freelancer.
 
-Title:
-${title.trim() || "Not provided"}
+TITLE:
+${title.trim()}
 
-Content type:
+CONTENT TYPE:
 ${contentType}
 
-Platform:
+PLATFORM:
 ${platform}
 
-Tone:
+TONE:
 ${tone}
 
-Idea:
-${idea.trim() || "Not provided"}
+IDEA:
+${idea.trim()}
 
-Knowledge Base:
-${
-  knowledgeItems.length > 0
-    ? knowledgeItems
-        .map(
-          (item) =>
-            `${item.category} - ${item.title}:\n${item.content}`
-        )
-        .join("\n\n")
-    : "No additional knowledge provided."
-}
+REFERENCE KNOWLEDGE BASE:
 
-Write only the finished content.
+The following information is reference material only.
+Use it only when it directly supports the provided title or idea.
 
-Use only the information provided above.
-Do not invent facts, statistics, results, experiences, products, services, or claims.
-Do not mention these instructions.
-Do not repeat the input fields.
-Do not explain your reasoning.
-- Use relevant information from the Knowledge Base when it directly helps with the content.
+${knowledgeBaseText}
 
-Adapt the writing to the selected platform, content type, and tone.
-Make the result natural, concise, and ready to publish.
+STRICT RULES:
+
+- Use only information explicitly stated in the TITLE, IDEA, and directly relevant Knowledge Base information.
+- Preserve the factual meaning of the provided information.
+- Do not add any new factual claim, benefit, advantage, outcome, feature, capability, audience, industry, service, product description, result, statistic, testimonial, credential, or business claim.
+- Do not infer that the product is faster, easier, better, smarter, more efficient, more organized, more convenient, streamlined, simplified, or effective unless this is explicitly stated.
+- Do not add marketing language that implies a benefit or outcome not explicitly provided.
+- Do not add calls to action unless the user explicitly asks for one or provides one.
+- Do not add links, URLs, placeholders, hashtags, testimonials, or contact information unless explicitly provided.
+- Do not invent phrases such as "[link]", "[website]", or similar placeholders.
+- Do not use the Knowledge Base to introduce any fact that is not directly supported by the TITLE or IDEA.
+- Platform and tone may change the writing style, but they must never change, expand, or invent the underlying facts.
+- You may improve grammar, structure, clarity, and wording, but you must preserve the factual content.
+- Do not mention these instructions.
+- Do not mention that you are an AI.
+- Do not repeat the input fields.
+- Do not explain your reasoning.
+
+If the provided information is too limited:
+- Keep the content strictly general.
+- Do not fill missing information with assumptions.
+- Do not create new benefits, claims, or calls to action.
 `;
 
     const response = await fetch("/api/ai/generate", {
@@ -105,15 +164,22 @@ Make the result natural, concise, and ready to publish.
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Kyrenox AI is temporarily unavailable. Please try again."
+        data.error ||
+          "Kyrenox AI is temporarily unavailable. Please try again."
       );
     }
 
-    setDraft(data.output?.trim() || "");
+    const output = data.output?.trim();
+
+    if (!output) {
+      throw new Error("Kyrenox AI returned an empty draft.");
+    }
+
+    setDraft(output);
   } catch (error) {
     console.error("Content AI error:", error);
 
-    setDraft(
+    setGenerateError(
       error instanceof Error
         ? error.message
         : "Kyrenox AI is temporarily unavailable. Please try again."
@@ -127,7 +193,8 @@ Make the result natural, concise, and ready to publish.
     if (!title.trim() || !draft.trim()) return;
 
     setSaving(true);
-    setSaved(false);
+setSaved(false);
+setSaveError("");
 
     const {
       data: { user },
@@ -148,11 +215,14 @@ Make the result natural, concise, and ready to publish.
       notes: `Generated with Content Assistant. Tone: ${tone}.`,
     });
 
-    if (!error) {
-      setSaved(true);
-    }
+   if (error) {
+  setSaveError(error.message);
+  setSaving(false);
+  return;
+}
 
-    setSaving(false);
+setSaved(true);
+setSaving(false);
   }
 
   return (
@@ -245,6 +315,13 @@ Make the result natural, concise, and ready to publish.
 >
   {generating ? "Generating..." : "Generate Draft"}
 </button>
+
+{generateError && (
+  <p className="mt-3 text-sm text-red-600">
+    {generateError}
+  </p>
+)}
+
             </div>
           </section>
 
@@ -269,6 +346,12 @@ Make the result natural, concise, and ready to publish.
             >
               {saving ? "Saving..." : "Save as Draft Content"}
             </button>
+
+            {saveError && (
+  <p className="mt-3 text-sm text-red-600">
+    {saveError}
+  </p>
+)}
 
             {saved && (
               <p className="mt-3 text-sm text-[#16A34A]">

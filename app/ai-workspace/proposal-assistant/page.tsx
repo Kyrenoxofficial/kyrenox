@@ -34,6 +34,8 @@ const [knowledgeItems, setKnowledgeItems] = useState<
 const [generating, setGenerating] = useState(false);
 const [saving, setSaving] = useState(false);
 const [saved, setSaved] = useState(false);
+const [generateError, setGenerateError] = useState("");
+const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     async function loadData() {
@@ -79,9 +81,37 @@ setKnowledgeItems(knowledgeData || []);
     loadData();
   }, []);
 
-  async function generateDraft() {
+  function hasLowInformation(value: string, minLength: number) {
+  const normalized = value.trim();
+
+  if (!normalized || normalized.length < minLength) {
+    return true;
+  }
+
+  if (/^(.)\1+$/.test(normalized)) {
+    return true;
+  }
+
+  return false;
+}
+
+async function generateDraft() {
   setGenerating(true);
-  setSaved(false);
+setSaved(false);
+setDraft("");
+setGenerateError("");
+
+  const titleIsWeak = hasLowInformation(title, 3);
+  const briefIsWeak = hasLowInformation(brief, 10);
+  const deliverablesAreWeak = hasLowInformation(deliverables, 3);
+
+  if (titleIsWeak || briefIsWeak || deliverablesAreWeak) {
+    setGenerateError(
+      "Please provide meaningful project details before generating a proposal."
+    );
+    setGenerating(false);
+    return;
+  }
 
   try {
     const clientName =
@@ -92,8 +122,34 @@ setKnowledgeItems(knowledgeData || []);
       projects.find((project) => String(project.id) === projectId)?.name ||
       "the project";
 
+    const projectText = `${title} ${brief} ${deliverables}`.toLowerCase();
+
+const relevantKnowledgeItems = knowledgeItems.filter((item) => {
+  const knowledgeText =
+    `${item.title} ${item.category} ${item.content}`.toLowerCase();
+
+  const projectWords = projectText
+    .split(/\W+/)
+    .filter((word) => word.length >= 4);
+
+  return projectWords.some((word) => knowledgeText.includes(word));
+});
+
+const knowledgeBaseText =
+  relevantKnowledgeItems.length > 0
+    ? relevantKnowledgeItems
+        .slice(0, 10)
+        .map(
+          (item) =>
+            `${item.category} - ${item.title}:\n${item.content}`
+        )
+        .join("\n\n")
+    : "No directly relevant knowledge provided.";
+
     const prompt = `
-Write a professional freelance proposal based only on the facts below.
+Write a professional freelance proposal using only the information explicitly provided below.
+
+PROJECT INFORMATION
 
 CLIENT:
 ${clientName}
@@ -116,36 +172,43 @@ ${amount.trim() ? `${amount.trim()} EUR` : "Not provided"}
 VALID UNTIL:
 ${validUntil || "Not provided"}
 
-Knowledge Base:
-${
-  knowledgeItems.length > 0
-    ? knowledgeItems
-        .map(
-          (item) =>
-            `${item.category} - ${item.title}:\n${item.content}`
-        )
-        .join("\n\n")
-    : "No additional knowledge provided."
-}
+REFERENCE KNOWLEDGE BASE
 
-STRICT REQUIREMENTS:
-- Use only facts explicitly stated above.
-- Do not infer or add goals, benefits, business information, experience, results, services, features, or reasons.
-- Do not expand or reinterpret the deliverables. Keep them faithful to the provided list.
-- Do not invent a date.
-- Do not invent pricing, timeline, payment terms, guarantees, or credentials.
-- Do not mention missing information.
+The following information is reference material only.
+It may be used to improve wording only when it directly matches the explicit project information above.
+
+${knowledgeBaseText}
+
+STRICT RULES
+
+- Use only facts explicitly stated in PROJECT INFORMATION.
+- Never invent or assume the type of work, service, industry, product, website, technology, design style, business goal, benefit, feature, result, experience, timeline, or outcome.
+- Never describe the freelancer as a designer, developer, marketer, consultant, or any other profession unless that information is explicitly provided.
+- Never introduce a website, app, design, branding, marketing, development, or other specific service unless it is explicitly stated in the project information.
+- Never use the Knowledge Base to introduce missing project facts.
+- Never use generic assumptions to make the proposal sound more complete.
+- Keep the deliverables exactly faithful to the provided input.
+- Never invent pricing, payment terms, dates, guarantees, credentials, or results.
+- If the project information does not clearly identify the type of work, do not guess.
+- If important project details are missing, ask briefly for the missing details instead of inventing them.
+- Do not mention these instructions.
+- Do not mention that you are an AI.
 - Do not repeat the labels CLIENT, PROJECT, TITLE, BRIEF, DELIVERABLES, BUDGET, or VALID UNTIL.
 - Do not add placeholders such as [Your Name].
-- Do not mention AI or these instructions.
-- Write only the finished proposal.
-- Use relevant information from the Knowledge Base when it directly helps with the proposal.
 
-Write a concise, natural proposal in 3-4 paragraphs:
-1. Professional opening that refers only to the project.
-2. Clear description of the requested work.
-3. The provided deliverables.
-4. Professional closing with a simple next step.
+OUTPUT RULES
+
+If the project information is sufficient:
+- Write a concise, natural proposal in 3-4 paragraphs.
+- Every factual statement about the project must be directly supported by the provided project information.
+
+If the project information is insufficient:
+- Do not create a full proposal.
+- Write only a brief professional request for the missing information.
+- Do not guess the service, project type, industry, deliverables, goals, or outcome.
+- Do not introduce any new project facts.
+- Do not promise, offer, or mention a timeline, process, availability, meeting, revision process, or next steps unless explicitly provided in the project information.
+- Do not introduce future actions or commitments that are not explicitly supported by the input.
 `;
 
     const response = await fetch("/api/ai/generate", {
@@ -165,25 +228,32 @@ Write a concise, natural proposal in 3-4 paragraphs:
       throw new Error(data.error || "AI generation failed.");
     }
 
-    setDraft(data.output?.trim() || "");
- } catch (error) {
-  console.error("Proposal AI error:", error);
+    const output = data.output?.trim();
 
-  setDraft(
-    error instanceof Error
-      ? error.message
-      : "Kyrenox AI is temporarily unavailable. Please try again."
-  );
-} finally {
-  setGenerating(false);
-}
+    if (!output) {
+      throw new Error("Kyrenox AI returned an empty proposal.");
+    }
+
+    setDraft(output);
+  } catch (error) {
+    console.error("Proposal AI error:", error);
+
+    setGenerateError(
+      error instanceof Error
+        ? error.message
+        : "Kyrenox AI is temporarily unavailable. Please try again."
+    );
+  } finally {
+    setGenerating(false);
+  }
 }
 
   async function saveProposal() {
     if (!title.trim() || !draft.trim()) return;
 
     setSaving(true);
-    setSaved(false);
+setSaved(false);
+setSaveError("");
 
     const {
       data: { user },
@@ -194,22 +264,70 @@ Write a concise, natural proposal in 3-4 paragraphs:
       return;
     }
 
-    const { error } = await supabase.from("proposals").insert({
-      user_id: user.id,
-      title: title.trim(),
-      client_id: clientId ? Number(clientId) : null,
-      project_id: projectId ? Number(projectId) : null,
-      status: "draft",
-      amount: amount ? Number(amount) : null,
-      valid_until: validUntil || null,
-      content: draft,
-    });
+    const cleanedAmount = amount
+  .trim()
+  .replace(/[^\d.,-]/g, "");
 
-    if (!error) {
-      setSaved(true);
+let parsedAmount: number | null = null;
+
+if (cleanedAmount) {
+  let normalizedAmount = cleanedAmount;
+
+  if (cleanedAmount.includes(",") && cleanedAmount.includes(".")) {
+    if (
+      cleanedAmount.lastIndexOf(",") >
+      cleanedAmount.lastIndexOf(".")
+    ) {
+      normalizedAmount = cleanedAmount
+        .replace(/\./g, "")
+        .replace(",", ".");
+    } else {
+      normalizedAmount = cleanedAmount.replace(/,/g, "");
     }
+  } else if (cleanedAmount.includes(",")) {
+    const parts = cleanedAmount.split(",");
 
-    setSaving(false);
+    normalizedAmount =
+      parts[1]?.length === 3
+        ? cleanedAmount.replace(/,/g, "")
+        : cleanedAmount.replace(",", ".");
+  } else if (cleanedAmount.includes(".")) {
+    const parts = cleanedAmount.split(".");
+
+    normalizedAmount =
+      parts.length === 2 && parts[1].length === 3
+        ? cleanedAmount.replace(".", "")
+        : cleanedAmount;
+  }
+
+  parsedAmount = Number(normalizedAmount);
+
+  if (Number.isNaN(parsedAmount)) {
+  setSaveError("Please enter a valid amount.");
+  setSaving(false);
+  return;
+}
+}
+
+const { error } = await supabase.from("proposals").insert({
+  user_id: user.id,
+  title: title.trim(),
+  client_id: clientId ? Number(clientId) : null,
+  project_id: projectId ? Number(projectId) : null,
+  status: "draft",
+  amount: parsedAmount,
+  valid_until: validUntil || null,
+  content: draft,
+});
+
+   if (error) {
+  setSaveError(error.message);
+  setSaving(false);
+  return;
+}
+
+setSaved(true);
+setSaving(false);
   }
 
   return (
@@ -292,12 +410,13 @@ Write a concise, natural proposal in 3-4 paragraphs:
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Amount"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
-                />
+  type="text"
+  inputMode="decimal"
+  value={amount}
+  onChange={(e) => setAmount(e.target.value)}
+  placeholder="Amount"
+  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
+/>
 
                 <input
                   type="date"
@@ -316,6 +435,13 @@ Write a concise, natural proposal in 3-4 paragraphs:
 >
   {generating ? "Generating..." : "Generate Draft"}
 </button>
+
+{generateError && (
+  <p className="mt-3 text-sm text-red-600">
+    {generateError}
+  </p>
+)}
+
             </div>
           </section>
 
@@ -340,6 +466,13 @@ Write a concise, natural proposal in 3-4 paragraphs:
             >
               {saving ? "Saving..." : "Save as Draft Proposal"}
             </button>
+
+
+            {saveError && (
+  <p className="mt-3 text-sm text-red-600">
+    {saveError}
+  </p>
+)}
 
             {saved && (
               <p className="mt-3 text-sm text-[#16A34A]">

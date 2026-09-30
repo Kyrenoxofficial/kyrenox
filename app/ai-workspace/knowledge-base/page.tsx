@@ -37,10 +37,9 @@ export default function KnowledgeBasePage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    loadItems();
-  }, []);
+  
 
+  useEffect(() => {
   async function loadItems() {
     setLoading(true);
     setError("");
@@ -68,6 +67,9 @@ export default function KnowledgeBasePage() {
 
     setLoading(false);
   }
+
+  loadItems();
+}, []);
 
   function resetForm() {
     setTitle("");

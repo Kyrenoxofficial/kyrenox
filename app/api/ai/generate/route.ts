@@ -5,7 +5,7 @@ const mistral = new Mistral({
   apiKey: process.env.MISTRAL_API_KEY,
 });
 
-console.log("MISTRAL_API_KEY loaded:", Boolean(process.env.MISTRAL_API_KEY));
+
 
 export async function POST(request: Request) {
   try {
