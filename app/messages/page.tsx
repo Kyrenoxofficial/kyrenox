@@ -961,7 +961,7 @@ const reviewingProject = reviewingMessage?.project_id
 </header>
 
           <div className="flex min-h-0 flex-1 p-4 md:p-6">
-            <div className="flex h-[calc(100vh-9.5rem)] min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+            <div className="flex h-[calc(100dvh-9.5rem)] min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white md:h-[calc(100vh-9.5rem)]">
               {/* Conversations */}
               <aside
   className={`h-full w-full shrink-0 overflow-y-auto border-r border-[#E5E7EB] md:w-80 ${
