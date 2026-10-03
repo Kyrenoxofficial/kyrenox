@@ -2,11 +2,12 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../utils/supabase/server";
 import {
+  Activity,
   BarChart3,
   FileText,
   FolderKanban,
   LayoutDashboard,
-  Menu,
+  MessageSquare,
   Settings,
   Sparkles,
   Users,
@@ -144,137 +145,165 @@ const revenueGrowth =
 return (
     <main className="min-h-screen bg-[#F8F9FA] text-[#111111]">
       <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <aside className="hidden w-64 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
-          <div className="flex h-20 items-center border-b border-[#E5E7EB] px-6">
-            <div className="flex items-center gap-2">
-              <img
-                src="/kyrenox-logo.svg"
-                alt=""
-                className="h-7 w-7"
-              />
-              <span className="text-xl font-medium tracking-tight">
-                Kyrenox
-              </span>
-            </div>
-          </div>
+       {/* Sidebar */}
+<aside className="hidden h-screen w-64 shrink-0 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
+  <div className="flex h-20 items-center border-b border-[#E5E7EB] px-6">
+    <div className="flex items-center gap-2">
+      <img
+        src="/kyrenox-logo.svg"
+        alt=""
+        className="h-7 w-7"
+      />
 
-          <nav className="flex-1 px-4 py-6">
-            <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
-              Workspace
-            </p>
+      <span className="text-xl font-medium tracking-tight">
+        Kyrenox
+      </span>
+    </div>
+  </div>
 
-            <div className="space-y-1">
-              <a
-                href="/dashboard"
-                className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium"
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                Dashboard
-              </a>
+ <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
+    <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+      Workspace
+    </p>
 
-              <a
-                href="/clients"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-              >
-                <Users className="h-4 w-4" />
-                Clients
-              </a>
+    <div className="space-y-1">
+      <a
+        href="/dashboard"
+        className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
+      >
+        <LayoutDashboard className="h-4 w-4" />
+        Dashboard
+      </a>
 
-              <a
-                href="/projects"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-              >
-                <FolderKanban className="h-4 w-4" />
-                Projects
-              </a>
+      <a
+        href="/clients"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <Users className="h-4 w-4" />
+        Clients
+      </a>
 
-              <a
-                href="/proposals"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-              >
-                <FileText className="h-4 w-4" />
-                Proposals
-              </a>
+      <a
+        href="/projects"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <FolderKanban className="h-4 w-4" />
+        Projects
+      </a>
 
-<a
-  href="/content"
-  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
->
-  <FileText className="h-4 w-4" />
-  Content
-</a>
+      <a
+        href="/proposals"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <FileText className="h-4 w-4" />
+        Proposals
+      </a>
 
-<a
-  href="/automations"
-  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
->
-  <Zap className="h-4 w-4" />
-  Automations
-</a>
+      <a
+        href="/content"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <FileText className="h-4 w-4" />
+        Content
+      </a>
 
-              <a
-                href="/analytics"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-              >
-                <BarChart3 className="h-4 w-4" />
-                Analytics
-              </a>
-            </div>
+      <a
+        href="/automations"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <Zap className="h-4 w-4" />
+        Automations
+      </a>
 
-            <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
-              Tools
-            </p>
+      <a
+        href="/analytics"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <BarChart3 className="h-4 w-4" />
+        Analytics
+      </a>
 
-            <a
-  href="/ai-workspace"
-  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
->
-  <Sparkles className="h-4 w-4" />
-  AI Workspace
-</a>
-          </nav>
+      <a
+        href="/activity"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <Activity className="h-4 w-4" />
+        Activity
+      </a>
+    </div>
 
-          <div className="border-t border-[#E5E7EB] p-4">
-            <a
-              href="/settings"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-            >
-              <Settings className="h-4 w-4" />
-              Settings
-            </a>
-            <form
-  action={async () => {
-    "use server";
+    <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+      Communication
+    </p>
 
-    const supabase = await createClient();
-    await supabase.auth.signOut();
-    redirect("/login");
-    
-  }}
-  className="mt-2"
->
-  <button
-    type="submit"
-    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-  >
-    Log out
-  </button>
-</form>
-          </div>
-        </aside>
+    <div className="space-y-1">
+      <a
+        href="/messages"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <MessageSquare className="h-4 w-4" />
+        Messages
+      </a>
+    </div>
+
+    <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+      Tools
+    </p>
+
+    <div className="space-y-1">
+      <a
+        href="/ai-workspace"
+        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        <Sparkles className="h-4 w-4" />
+        AI Workspace
+      </a>
+    </div>
+  </nav>
+
+  <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
+    <a
+      href="/settings"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <Settings className="h-4 w-4" />
+      Settings
+    </a>
+
+    <form
+      action={async () => {
+        "use server";
+
+        const supabase = await createClient();
+        await supabase.auth.signOut();
+        redirect("/login");
+      }}
+      className="mt-2"
+    >
+      <button
+        type="submit"
+        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+      >
+        Log out
+      </button>
+    </form>
+  </div>
+</aside>
 
         {/* Main content */}
         <section className="flex-1">
           <header className="flex h-20 items-center justify-between border-b border-[#E5E7EB] bg-white px-6 md:px-10">
-           <MobileSidebar />
-            <div>
-              <p className="text-sm text-[#6B7280]">Workspace</p>
-              <h1 className="text-lg font-semibold">Dashboard</h1>
-            </div>
+  <div className="md:hidden">
+    <MobileSidebar />
+  </div>
 
-            <NewMenu />
-          </header>
+  <div>
+    <p className="text-sm text-[#6B7280]">Workspace</p>
+    <h1 className="text-lg font-semibold">Dashboard</h1>
+  </div>
+
+  <NewMenu />
+</header>
 
           <div className="mx-auto max-w-7xl px-6 py-10 md:px-10">
             <div>

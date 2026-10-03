@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 
 const supabase = createClient();
@@ -91,6 +91,7 @@ function formatDate(date: string | null) {
 
 export default function ContentPage() {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+  const [contentSearch, setContentSearch] = useState("");
   const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -270,6 +271,28 @@ export default function ContentPage() {
       projects.find((project) => project.id === projectId)?.name || null
     );
   }
+
+  const filteredContent = contentItems.filter((item) => {
+  const query = contentSearch.trim().toLowerCase();
+
+  if (!query) {
+    return true;
+  }
+
+  const clientName =
+    clients.find((client) => client.id === item.client_id)?.name ?? "";
+
+  const projectName =
+    projects.find((project) => project.id === item.project_id)?.name ?? "";
+
+  return (
+    item.title.toLowerCase().includes(query) ||
+    item.content_type.toLowerCase().includes(query) ||
+    item.platform.toLowerCase().includes(query) ||
+    clientName.toLowerCase().includes(query) ||
+    projectName.toLowerCase().includes(query)
+  );
+});
 
   return (
     <main className="min-h-screen bg-[#F8F9FA] px-6 py-8 md:px-9">
@@ -510,8 +533,35 @@ export default function ContentPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {contentItems.map((item) => {
+          <div className="w-full">
+  <div className="relative mb-5 max-w-md">
+    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+
+    <input
+      type="search"
+      value={contentSearch}
+      onChange={(e) => setContentSearch(e.target.value)}
+      placeholder="Search content..."
+      className="w-full rounded-md border border-[#D1D5DB] bg-white py-2.5 pl-9 pr-3 text-sm text-[#111111] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#111111]"
+    />
+  </div>
+
+  {filteredContent.length === 0 ? (
+    <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-8 text-center">
+      <p className="text-sm text-[#6B7280]">
+        No content found.
+      </p>
+    </div>
+  ) : (
+    <div
+      className={
+        filteredContent.length > 5
+          ? "max-h-[calc(100vh-230px)] space-y-3 overflow-y-auto pr-2"
+          : "space-y-3"
+      }
+    >
+      {filteredContent.map((item) => {
+        
               const clientName = getClientName(item.client_id);
               const projectName = getProjectName(item.project_id);
 
@@ -618,10 +668,12 @@ export default function ContentPage() {
                   </div>
                 </div>
               );
-            })}
+                        })}
           </div>
         )}
       </div>
+    )}
+    </div>
     </main>
   );
 }

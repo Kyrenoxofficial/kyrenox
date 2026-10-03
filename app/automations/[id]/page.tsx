@@ -14,6 +14,10 @@ type Automation = {
   trigger: string | null;
   action: string | null;
   status: string;
+    mode: "draft" | "review" | "auto_send";
+  conditions: {
+    keyword?: string;
+  };
   description: string | null;
   client_id: number | null;
   project_id: number | null;
@@ -47,6 +51,14 @@ const statuses = [
   { value: "error", label: "Error" },
 ];
 
+
+const modes = [
+  { value: "draft", label: "Draft" },
+  { value: "review", label: "Review" },
+  { value: "auto_send", label: "Auto-send" },
+];
+
+
 function getToolLabel(tool: string) {
   return tools.find((item) => item.value === tool)?.label ?? tool;
 }
@@ -54,6 +66,20 @@ function getToolLabel(tool: string) {
 function getStatusLabel(status: string) {
   return statuses.find((item) => item.value === status)?.label ?? status;
 }
+
+
+function getModeLabel(mode: string) {
+  if (mode === "auto_send") {
+    return "Auto-send";
+  }
+
+  if (mode === "review") {
+    return "Review";
+  }
+
+  return "Draft";
+}
+
 
 function getStatusClasses(status: string) {
   if (status === "active") {
@@ -98,9 +124,10 @@ export default function AutomationDetailPage() {
   const [name, setName] = useState("");
   const [tool, setTool] = useState("make");
   const [trigger, setTrigger] = useState("");
-  const [action, setAction] = useState("");
-  const [status, setStatus] = useState("draft");
-  const [description, setDescription] = useState("");
+const [action, setAction] = useState("");
+const [status, setStatus] = useState("draft");
+const [mode, setMode] = useState("draft");
+const [description, setDescription] = useState("");
   const [clientId, setClientId] = useState("");
   const [projectId, setProjectId] = useState("");
   const [notes, setNotes] = useState("");
@@ -169,9 +196,10 @@ export default function AutomationDetailPage() {
     setName(automationData.name);
     setTool(automationData.tool);
     setTrigger(automationData.trigger || "");
-    setAction(automationData.action || "");
-    setStatus(automationData.status);
-    setDescription(automationData.description || "");
+setAction(automationData.action || "");
+setStatus(automationData.status);
+setMode(automationData.mode || "draft");
+setDescription(automationData.description || "");
     setClientId(
       automationData.client_id
         ? String(automationData.client_id)
@@ -219,10 +247,11 @@ export default function AutomationDetailPage() {
 
     setName(automation.name);
     setTool(automation.tool);
-    setTrigger(automation.trigger || "");
-    setAction(automation.action || "");
-    setStatus(automation.status);
-    setDescription(automation.description || "");
+   setTrigger(automation.trigger || "");
+setAction(automation.action || "");
+setStatus(automation.status);
+setMode(automation.mode || "draft");
+setDescription(automation.description || "");
     setClientId(
       automation.client_id
         ? String(automation.client_id)
@@ -268,12 +297,13 @@ export default function AutomationDetailPage() {
     }
 
     const payload = {
-      name: name.trim(),
-      tool,
-      trigger: trigger.trim() || null,
-      action: action.trim() || null,
-      status,
-      description: description.trim() || null,
+  name: name.trim(),
+  tool,
+  trigger: trigger.trim() || null,
+  action: action.trim() || null,
+  status,
+  mode,
+  description: description.trim() || null,
       client_id: clientId ? Number(clientId) : null,
       project_id: projectId ? Number(projectId) : null,
       notes: notes.trim() || null,
@@ -392,7 +422,7 @@ export default function AutomationDetailPage() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <div className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
               <p className="text-xs text-[#6B7280]">Client</p>
 
@@ -434,6 +464,17 @@ export default function AutomationDetailPage() {
     {formatDate(automation.last_run_at)}
   </p>
 </div>
+
+
+<div className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
+  <p className="text-xs text-[#6B7280]">Mode</p>
+
+  <p className="mt-2 text-sm font-medium text-[#111111]">
+    {getModeLabel(automation.mode)}
+  </p>
+</div>
+
+
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -457,6 +498,20 @@ export default function AutomationDetailPage() {
               </p>
             </div>
           </div>
+
+
+<div className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm">
+  <h2 className="text-sm font-semibold text-[#111111]">
+    Condition
+  </h2>
+
+  <p className="mt-4 text-sm leading-7 text-[#111111]">
+    {automation.conditions?.keyword
+      ? `Message contains: ${automation.conditions.keyword}`
+      : "No condition added yet."}
+  </p>
+</div>
+
 
           <div className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm">
             <h2 className="text-sm font-semibold text-[#111111]">
@@ -544,43 +599,61 @@ export default function AutomationDetailPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                  Tool
-                </label>
+           <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+  <div>
+    <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+      Tool
+    </label>
 
-                <select
-                  value={tool}
-                  onChange={(e) => setTool(e.target.value)}
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
-                >
-                  {tools.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+    <select
+      value={tool}
+      onChange={(e) => setTool(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {tools.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                  Status
-                </label>
+  <div>
+    <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+      Status
+    </label>
 
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
-                >
-                  {statuses.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+    <select
+      value={status}
+      onChange={(e) => setStatus(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {statuses.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div>
+    <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+      Mode
+    </label>
+
+    <select
+      value={mode}
+      onChange={(e) => setMode(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {modes.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
             <div>
               <label className="mb-1.5 block text-sm font-medium text-[#111111]">

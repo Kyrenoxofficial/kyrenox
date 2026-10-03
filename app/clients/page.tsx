@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 export default function ClientsPage() {
     const [showForm, setShowForm] = useState(false);
     const [editingClientId, setEditingClientId] = useState<number | null>(null);
     const [clientName, setClientName] = useState("");
 const [clientEmail, setClientEmail] = useState("");
+const [clientSearch, setClientSearch] = useState("");
 const formRef = useRef<HTMLDivElement>(null);
     const [clients, setClients] = useState<
   { id: number; name: string; email: string | null }[]
@@ -42,8 +43,31 @@ const [automations, setAutomations] = useState<
       .order("created_at", { ascending: false });
 
     if (data) {
-      setClients(data);
+  setClients(data);
+
+  const params = new URLSearchParams(window.location.search);
+  const editId = Number(params.get("edit"));
+
+  if (editId) {
+    const clientToEdit = data.find((client) => client.id === editId);
+
+    if (clientToEdit) {
+      setEditingClientId(clientToEdit.id);
+      setClientName(clientToEdit.name);
+      setClientEmail(clientToEdit.email ?? "");
+      setShowForm(true);
+
+      window.history.replaceState({}, "", "/clients");
+
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 0);
     }
+  }
+}
   }
 
   loadClients();
@@ -283,6 +307,20 @@ function editClient(id: number) {
 
   
 }
+
+const filteredClients = clients.filter((client) => {
+  const query = clientSearch.trim().toLowerCase();
+
+  if (!query) {
+    return true;
+  }
+
+  return (
+    client.name.toLowerCase().includes(query) ||
+    (client.email ?? "").toLowerCase().includes(query)
+  );
+});
+
   return (
     <main className="min-h-screen bg-[#F8F9FA] p-8">
         <a
@@ -361,6 +399,21 @@ onChange={(e) => setClientEmail(e.target.value)}
   </div>
 )} {clients.length > 0 && (
   <div className="mt-8 w-full">
+
+
+<div className="relative mb-5 max-w-md">
+  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+
+  <input
+    type="search"
+    value={clientSearch}
+    onChange={(e) => setClientSearch(e.target.value)}
+    placeholder="Search clients..."
+    className="w-full rounded-md border border-[#D1D5DB] bg-white py-2.5 pl-9 pr-3 text-sm text-[#111111] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#111111]"
+  />
+</div>
+
+
     <div className="mb-2 hidden sm:grid sm:grid-cols-[1fr_1fr_1.2fr_1.2fr_1.2fr_auto] px-4 text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
   <span>Name</span>
   <span>Email</span>
@@ -370,8 +423,8 @@ onChange={(e) => setClientEmail(e.target.value)}
   <span className="text-right">Actions</span>
 </div>
 
-<div className="space-y-3">
-  {clients.map((client) => (
+<div className={filteredClients.length > 5 ? "space-y-3 max-h-[calc(100vh-230px)] overflow-y-auto pr-2" : "space-y-3"}>
+  {filteredClients.map((client) => (
       <div
   key={client.id}
   role="link"

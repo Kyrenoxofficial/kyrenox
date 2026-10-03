@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 
 const supabase = createClient();
@@ -13,6 +13,10 @@ type Automation = {
   trigger: string | null;
   action: string | null;
   status: string;
+  mode: "draft" | "review" | "auto_send";
+  conditions: {
+    keyword?: string;
+  };
   description: string | null;
   client_id: number | null;
   project_id: number | null;
@@ -32,6 +36,10 @@ type Project = {
   name: string;
 };
 
+
+
+
+
 const tools = [
   { value: "make", label: "Make" },
   { value: "n8n", label: "n8n" },
@@ -46,6 +54,14 @@ const statuses = [
   { value: "error", label: "Error" },
 ];
 
+
+const modes = [
+  { value: "draft", label: "Draft" },
+  { value: "review", label: "Review" },
+  { value: "auto_send", label: "Auto-send" },
+];
+
+
 function getToolLabel(tool: string) {
   return tools.find((item) => item.value === tool)?.label ?? tool;
 }
@@ -55,6 +71,19 @@ function getStatusLabel(status: string) {
     statuses.find((item) => item.value === status)?.label ?? status
   );
 }
+
+function getModeLabel(mode: string) {
+  if (mode === "auto_send") {
+    return "Auto-send";
+  }
+
+  if (mode === "review") {
+    return "Review";
+  }
+
+  return "Draft";
+}
+
 
 function getStatusClasses(status: string) {
   if (status === "active") {
@@ -82,9 +111,10 @@ function formatDate(date: string | null) {
 }
 
 export default function AutomationsPage() {
-  const [automations, setAutomations] = useState<Automation[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
+ const [automations, setAutomations] = useState<Automation[]>([]);
+ const [automationSearch, setAutomationSearch] = useState("");
+const [clients, setClients] = useState<Client[]>([]);
+const [projects, setProjects] = useState<Project[]>([]);
 
   const [showForm, setShowForm] = useState(false);
   const [editingAutomationId, setEditingAutomationId] = useState<number | null>(
@@ -92,16 +122,18 @@ export default function AutomationsPage() {
   );
 
   const [name, setName] = useState("");
-  const [tool, setTool] = useState("make");
-  const [trigger, setTrigger] = useState("");
-  const [action, setAction] = useState("");
-  const [status, setStatus] = useState("draft");
-  const [description, setDescription] = useState("");
-  const [clientId, setClientId] = useState("");
-  const [projectId, setProjectId] = useState("");
-  const [notes, setNotes] = useState("");
-  const [lastRunAt, setLastRunAt] = useState("");
-  const [nextRunAt, setNextRunAt] = useState("");
+const [tool, setTool] = useState("make");
+const [trigger, setTrigger] = useState("");
+const [action, setAction] = useState("");
+const [status, setStatus] = useState("draft");
+const [mode, setMode] = useState("draft");
+const [conditionKeyword, setConditionKeyword] = useState("");
+const [description, setDescription] = useState("");
+const [clientId, setClientId] = useState("");
+const [projectId, setProjectId] = useState("");
+const [notes, setNotes] = useState("");
+const [lastRunAt, setLastRunAt] = useState("");
+const [nextRunAt, setNextRunAt] = useState("");
 
   useEffect(() => {
     loadData();
@@ -114,58 +146,65 @@ export default function AutomationsPage() {
       return;
     }
 
-    const [
-      { data: automationData },
-      { data: clientsData },
-      { data: projectsData },
-    ] = await Promise.all([
-      supabase
-        .from("automations")
-        .select("*")
-        .eq("user_id", authData.user.id)
-        .order("created_at", { ascending: false }),
+   const [
+  { data: automationData },
+  { data: clientsData },
+  { data: projectsData },
+] = await Promise.all([
+  supabase
+    .from("automations")
+    .select("*")
+    .eq("user_id", authData.user.id)
+    .order("created_at", { ascending: false }),
 
-      supabase
-        .from("clients")
-        .select("id, name")
-        .eq("user_id", authData.user.id)
-        .order("name", { ascending: true }),
+  supabase
+    .from("clients")
+    .select("id, name")
+    .eq("user_id", authData.user.id)
+    .order("name", { ascending: true }),
 
-      supabase
-        .from("projects")
-        .select("id, name")
-        .eq("user_id", authData.user.id)
-        .order("name", { ascending: true }),
-    ]);
+  supabase
+    .from("projects")
+    .select("id, name")
+    .eq("user_id", authData.user.id)
+    .order("name", { ascending: true }),
+
+  
+]);
 
     setAutomations(automationData || []);
-    setClients(clientsData || []);
-    setProjects(projectsData || []);
+setClients(clientsData || []);
+setProjects(projectsData || []);
+
   }
 
   function resetForm() {
-    setName("");
-    setTool("make");
-    setTrigger("");
-    setAction("");
-    setStatus("draft");
-    setDescription("");
-    setClientId("");
-    setProjectId("");
-    setNotes("");
-    setLastRunAt("");
-    setNextRunAt("");
-    setEditingAutomationId(null);
-    setShowForm(false);
-  }
+  setName("");
+  setTool("make");
+  setTrigger("");
+  setAction("");
+  setStatus("draft");
+  setMode("draft");
+  setConditionKeyword("");
+  setDescription("");
+  setClientId("");
+  setProjectId("");
+  setNotes("");
+  setLastRunAt("");
+  setNextRunAt("");
+  setEditingAutomationId(null);
+  setShowForm(false);
+}
 
   function startEditing(automation: Automation) {
-    setName(automation.name);
-    setTool(automation.tool);
-    setTrigger(automation.trigger || "");
-    setAction(automation.action || "");
-    setStatus(automation.status);
-    setDescription(automation.description || "");
+  setName(automation.name);
+  setTool(automation.tool);
+  setTrigger(automation.trigger || "");
+  setAction(automation.action || "");
+  setStatus(automation.status);
+  setMode(automation.mode || "draft");
+  setConditionKeyword(automation.conditions?.keyword || "");
+  setDescription(automation.description || "");
     setClientId(
       automation.client_id ? String(automation.client_id) : ""
     );
@@ -207,22 +246,28 @@ export default function AutomationsPage() {
     }
 
     const payload = {
-      name: name.trim(),
-      tool,
-      trigger: trigger.trim() || null,
-      action: action.trim() || null,
-      status,
-      description: description.trim() || null,
-      client_id: clientId ? Number(clientId) : null,
-      project_id: projectId ? Number(projectId) : null,
-      notes: notes.trim() || null,
-      last_run_at: lastRunAt
-        ? new Date(lastRunAt).toISOString()
-        : null,
-      next_run_at: nextRunAt
-        ? new Date(nextRunAt).toISOString()
-        : null,
-    };
+  name: name.trim(),
+  tool,
+  trigger: trigger.trim() || null,
+  action: action.trim() || null,
+  status,
+  mode,
+  conditions: conditionKeyword.trim()
+    ? {
+        keyword: conditionKeyword.trim(),
+      }
+    : {},
+  description: description.trim() || null,
+  client_id: clientId ? Number(clientId) : null,
+  project_id: projectId ? Number(projectId) : null,
+  notes: notes.trim() || null,
+  last_run_at: lastRunAt
+    ? new Date(lastRunAt).toISOString()
+    : null,
+  next_run_at: nextRunAt
+    ? new Date(nextRunAt).toISOString()
+    : null,
+};
 
     if (editingAutomationId) {
       const { error } = await supabase
@@ -291,6 +336,28 @@ export default function AutomationsPage() {
     );
   }
 
+  const filteredAutomations = automations.filter((automation) => {
+    const query = automationSearch.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    const tool = getToolLabel(automation.tool).toLowerCase();
+    const status = getStatusLabel(automation.status).toLowerCase();
+    const trigger = automation.trigger?.toLowerCase() ?? "";
+    const action = automation.action?.toLowerCase() ?? "";
+
+    return (
+      automation.name.toLowerCase().includes(query) ||
+      tool.includes(query) ||
+      trigger.includes(query) ||
+      action.includes(query) ||
+      status.includes(query)
+    );
+  });
+
+
   return (
     <main className="min-h-screen bg-[#F8F9FA] px-6 py-8 md:px-9">
       <div>
@@ -357,43 +424,61 @@ export default function AutomationsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
-                    Tool
-                  </label>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+  <div>
+    <label className="mb-1.5 block text-base font-medium text-[#111111]">
+      Tool
+    </label>
 
-                  <select
-                    value={tool}
-                    onChange={(e) => setTool(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
-                  >
-                    {tools.map((item) => (
-                      <option key={item.value} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+    <select
+      value={tool}
+      onChange={(e) => setTool(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {tools.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
 
-                <div>
-                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
-                    Status
-                  </label>
+  <div>
+    <label className="mb-1.5 block text-base font-medium text-[#111111]">
+      Status
+    </label>
 
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
-                  >
-                    {statuses.map((item) => (
-                      <option key={item.value} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+    <select
+      value={status}
+      onChange={(e) => setStatus(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {statuses.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div>
+    <label className="mb-1.5 block text-base font-medium text-[#111111]">
+      Mode
+    </label>
+
+    <select
+      value={mode}
+      onChange={(e) => setMode(e.target.value)}
+      className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+    >
+      {modes.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
               <div>
                 <label className="mb-1.5 block text-base font-medium text-[#111111]">
@@ -424,18 +509,36 @@ export default function AutomationsPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-base font-medium text-[#111111]">
-                  Description
-                </label>
+  <label className="mb-1.5 block text-base font-medium text-[#111111]">
+    Condition
+  </label>
 
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe what this automation does..."
-                  rows={4}
-                  className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
-                />
-              </div>
+  <input
+    type="text"
+    value={conditionKeyword}
+    onChange={(e) => setConditionKeyword(e.target.value)}
+    placeholder="e.g. price, project, deadline"
+    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+  />
+
+  <p className="mt-1.5 text-xs text-[#9CA3AF]">
+    The incoming message must contain this keyword.
+  </p>
+</div>
+
+<div>
+  <label className="mb-1.5 block text-base font-medium text-[#111111]">
+    Description
+  </label>
+
+  <textarea
+    value={description}
+    onChange={(e) => setDescription(e.target.value)}
+    placeholder="Describe what this automation does..."
+    rows={4}
+    className="w-full resize-y rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
+  />
+</div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
@@ -544,7 +647,7 @@ export default function AutomationsPage() {
           </div>
         )}
 
-        {automations.length === 0 ? (
+               {automations.length === 0 ? (
           <div className="rounded-lg border border-[#E5E7EB] bg-white px-6 py-12 text-center shadow-sm">
             <h2 className="text-base font-semibold text-[#111111]">
               No automations yet
@@ -555,122 +658,167 @@ export default function AutomationsPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {automations.map((automation) => {
-              const clientName = getClientName(automation.client_id);
-              const projectName = getProjectName(
-                automation.project_id
-              );
+          <div className="w-full">
+            <div className="relative mb-5 max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
 
-              return (
-                <div
-  key={automation.id}
-  onClick={() => {
-    window.location.href = `/automations/${automation.id}`;
-  }}
-  className="cursor-pointer rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:bg-[#FCFCFC]"
->
-                  <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1.6fr_0.9fr_1fr_1fr_1.2fr_auto] lg:items-center">
-                    <div className="min-w-0">
-                      <h3 className="truncate text-sm font-semibold text-[#111111]">
-                        {automation.name}
-                      </h3>
+              <input
+                type="search"
+                value={automationSearch}
+                onChange={(e) => setAutomationSearch(e.target.value)}
+                placeholder="Search automations..."
+                className="w-full rounded-md border border-[#D1D5DB] bg-white py-2.5 pl-9 pr-3 text-sm text-[#111111] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#111111]"
+              />
+            </div>
 
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#9CA3AF]">
-                        <span>{getToolLabel(automation.tool)}</span>
+            {filteredAutomations.length === 0 ? (
+              <div className="rounded-lg border border-[#E5E7EB] bg-white px-6 py-12 text-center shadow-sm">
+                <p className="text-sm text-[#6B7280]">
+                  No automations found.
+                </p>
+              </div>
+            ) : (
+              <div
+                className={`space-y-3 ${
+                  filteredAutomations.length > 5
+                    ? "max-h-[calc(100vh-230px)] overflow-y-auto pr-2"
+                    : ""
+                }`}
+              >
+                {filteredAutomations.map((automation) => {
+                  const clientName = getClientName(automation.client_id);
+                  const projectName = getProjectName(
+                    automation.project_id
+                  );
 
-                        {automation.trigger && (
-                          <>
-                            <span>•</span>
-                            <span className="truncate">
-                              {automation.trigger}
-                            </span>
-                          </>
-                        )}
+                  return (
+                    <div
+                      key={automation.id}
+                      onClick={() => {
+                        window.location.href = `/automations/${automation.id}`;
+                      }}
+                      className="cursor-pointer rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:bg-[#FCFCFC]"
+                    >
+                      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[1.6fr_0.9fr_1fr_1fr_1.2fr_auto] lg:items-center">
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-semibold text-[#111111]">
+                            {automation.name}
+                          </h3>
+
+                         <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#9CA3AF]">
+  <span>{getToolLabel(automation.tool)}</span>
+
+  <span>•</span>
+
+  <span>
+    Mode: {getModeLabel(automation.mode)}
+  </span>
+
+  {automation.trigger && (
+    <>
+      <span>•</span>
+      <span className="truncate">
+        {automation.trigger}
+      </span>
+    </>
+  )}
+
+  {automation.conditions?.keyword && (
+    <>
+      <span>•</span>
+      <span className="truncate">
+        Condition: {automation.conditions.keyword}
+      </span>
+    </>
+  )}
+</div>
+                        </div>
+
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+                            Client
+                          </p>
+
+                          <p className="mt-1 truncate text-sm text-[#6B7280]">
+                            {clientName || "No client"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+                            Project
+                          </p>
+
+                          <p className="mt-1 truncate text-sm text-[#6B7280]">
+                            {projectName || "No project"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+                            Next Run
+                          </p>
+
+                          <p className="mt-1 text-sm text-[#6B7280]">
+                            {formatDate(automation.next_run_at)}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+                            Action
+                          </p>
+
+                          <p className="mt-1 truncate text-sm text-[#6B7280]">
+                            {automation.action || "No action"}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 lg:justify-end">
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClasses(
+                              automation.status
+                            )}`}
+                          >
+                            {getStatusLabel(automation.status)}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEditing(automation);
+                              }}
+                              className="rounded-md p-1.5 text-[#9CA3AF] transition hover:text-[#111111]"
+                              aria-label="Edit automation"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteAutomation(automation.id);
+                              }}
+                              className="rounded-md p-1.5 text-[#9CA3AF] transition hover:text-[#DC2626]"
+                              aria-label="Delete automation"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
-                        Client
-                      </p>
-
-                      <p className="mt-1 truncate text-sm text-[#6B7280]">
-                        {clientName || "No client"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
-                        Project
-                      </p>
-
-                      <p className="mt-1 truncate text-sm text-[#6B7280]">
-                        {projectName || "No project"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
-                        Next Run
-                      </p>
-
-                      <p className="mt-1 text-sm text-[#6B7280]">
-                        {formatDate(automation.next_run_at)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
-                        Action
-                      </p>
-
-                      <p className="mt-1 truncate text-sm text-[#6B7280]">
-                        {automation.action || "No action"}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3 lg:justify-end">
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClasses(
-                          automation.status
-                        )}`}
-                      >
-                        {getStatusLabel(automation.status)}
-                      </span>
-
-                      <div className="flex items-center gap-2">
-  <button
-    type="button"
-    onClick={(e) => {
-  e.stopPropagation();
-  startEditing(automation);
-}}
-    className="rounded-md p-1.5 text-[#9CA3AF] transition hover:text-[#111111]"
-    aria-label="Edit automation"
-  >
-    <Pencil className="h-4 w-4" />
-  </button>
-
-  <button
-    type="button"
-    onClick={(e) => {
-  e.stopPropagation();
-  deleteAutomation(automation.id);
-}}
-    className="rounded-md p-1.5 text-[#9CA3AF] transition hover:text-[#DC2626]"
-    aria-label="Delete automation"
-  >
-    <Trash2 className="h-4 w-4" />
-  </button>
-</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
+
+
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 
 type Project = {
@@ -41,6 +41,7 @@ const [automations, setAutomations] = useState<Automation[]>([]);
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState("active");
   const [projectDescription, setProjectDescription] = useState("");
+  const [projectSearch, setProjectSearch] = useState("");
   const [clients, setClients] = useState<
   { id: number; name: string }[]
 >([]);
@@ -348,6 +349,24 @@ setTimeout(() => {
     return "Active";
   }
 
+
+const filteredProjects = projects.filter((project) => {
+  const query = projectSearch.trim().toLowerCase();
+
+  if (!query) {
+    return true;
+  }
+
+  const clientName =
+    clients.find((client) => client.id === project.client_id)?.name ?? "";
+
+  return (
+    project.name.toLowerCase().includes(query) ||
+    clientName.toLowerCase().includes(query)
+  );
+});
+
+
   return (
    <main className="min-h-screen bg-[#F8F9FA] p-8">
         {/* Header */}
@@ -477,8 +496,34 @@ setTimeout(() => {
               </button>
             </div>
           ) : (
-            <div className="w-full space-y-3">
-              {projects.map((project) => (
+  <div className="w-full">
+    <div className="relative mb-5 max-w-md">
+      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+
+      <input
+        type="search"
+        value={projectSearch}
+        onChange={(e) => setProjectSearch(e.target.value)}
+        placeholder="Search projects..."
+        className="w-full rounded-md border border-[#D1D5DB] bg-white py-2.5 pl-9 pr-3 text-sm text-[#111111] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#111111]"
+      />
+    </div>
+
+    {filteredProjects.length === 0 ? (
+      <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-8 text-center">
+        <p className="text-sm text-[#6B7280]">
+          No projects found.
+        </p>
+      </div>
+    ) : (
+      <div
+        className={
+          filteredProjects.length > 5
+            ? "space-y-3 max-h-[calc(100vh-230px)] overflow-y-auto pr-2"
+            : "space-y-3"
+        }
+      >
+        {filteredProjects.map((project) => (
                 <div
   key={project.id}
   role="link"
@@ -582,11 +627,13 @@ setTimeout(() => {
                     </button>
                   </div>
                 </div>
-              ))}
+                            ))}
             </div>
           )}
         </div>
-    
+        )}
+    </div>
+
     </main>
   );
 }

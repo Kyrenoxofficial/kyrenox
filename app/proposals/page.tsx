@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 import { createClient } from "../utils/client";
 
 type Proposal = {
@@ -45,6 +45,7 @@ export default function ProposalsPage() {
   const [proposalAmount, setProposalAmount] = useState("");
   const [proposalValidUntil, setProposalValidUntil] = useState("");
   const [proposalContent, setProposalContent] = useState("");
+  const [proposalSearch, setProposalSearch] = useState("");
 
   useEffect(() => {
     async function loadData() {
@@ -370,6 +371,30 @@ useEffect(() => {
     });
   }
 
+    const filteredProposals = proposals.filter((proposal) => {
+    const query = proposalSearch.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    const clientName =
+      getClientName(proposal.client_id)?.toLowerCase() ?? "";
+
+    const projectName =
+      getProjectName(proposal.project_id)?.toLowerCase() ?? "";
+
+    const status =
+      getStatusLabel(proposal.status).toLowerCase();
+
+    return (
+      proposal.title.toLowerCase().includes(query) ||
+      clientName.includes(query) ||
+      projectName.includes(query) ||
+      status.includes(query)
+    );
+  });
+
   return (
     <main className="min-h-screen bg-[#F8F9FA] p-8">
       <a
@@ -590,129 +615,156 @@ useEffect(() => {
         </div>
       )}
 
-      <div className="mt-8">
-        {loading ? (
-          <div className="py-10 text-center text-sm text-[#9CA3AF]">
-            Loading proposals...
-          </div>
-        ) : proposals.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-10 text-center">
-            <h2 className="text-lg font-medium text-[#111111]">
-              No proposals yet
-            </h2>
+     <div className="mt-8">
+  {loading ? (
+    <div className="py-10 text-center text-sm text-[#9CA3AF]">
+      Loading proposals...
+    </div>
+  ) : proposals.length === 0 ? (
+    <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-10 text-center">
+      <h2 className="text-lg font-medium text-[#111111]">
+        No proposals yet
+      </h2>
 
-            <p className="mt-2 text-sm text-[#6B7280]">
-              Create your first proposal to start managing
-              your sales process.
-            </p>
+      <p className="mt-2 text-sm text-[#6B7280]">
+        Create your first proposal to start managing
+        your sales process.
+      </p>
+    </div>
+  ) : (
+    <div className="w-full">
+      <div className="relative mb-5 max-w-md">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
 
-           
-          </div>
-        ) : (
-          <div className="w-full space-y-3">
-            {proposals.map((proposal) => {
-              const clientName = getClientName(
-                proposal.client_id
-              );
-              const projectName = getProjectName(
-                proposal.project_id
-              );
+        <input
+          type="search"
+          value={proposalSearch}
+          onChange={(e) => setProposalSearch(e.target.value)}
+          placeholder="Search proposals..."
+          className="w-full rounded-md border border-[#D1D5DB] bg-white py-2.5 pl-9 pr-3 text-sm text-[#111111] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#111111]"
+        />
+      </div>
 
-              return (
-                <div
-                  key={proposal.id}
-                  role="link"
-                  tabIndex={0}
-                  onClick={() => {
+      {filteredProposals.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-[#D1D5DB] bg-white px-6 py-8 text-center">
+          <p className="text-sm text-[#6B7280]">
+            No proposals found.
+          </p>
+        </div>
+      ) : (
+        <div
+          className={
+            filteredProposals.length > 5
+              ? "max-h-[calc(100vh-230px)] space-y-3 overflow-y-auto pr-2"
+              : "space-y-3"
+          }
+        >
+          {filteredProposals.map((proposal) => {
+            const clientName = getClientName(
+              proposal.client_id
+            );
+
+            const projectName = getProjectName(
+              proposal.project_id
+            );
+
+            return (
+              <div
+                key={proposal.id}
+                role="link"
+                tabIndex={0}
+                onClick={() => {
+                  window.location.href = `/proposals/${proposal.id}`;
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" ||
+                    e.key === " "
+                  ) {
+                    e.preventDefault();
                     window.location.href = `/proposals/${proposal.id}`;
-                  }}
-                  onKeyDown={(e) => {
-                    if (
-                      e.key === "Enter" ||
-                      e.key === " "
-                    ) {
-                      e.preventDefault();
-                      window.location.href = `/proposals/${proposal.id}`;
-                    }
-                  }}
-                  className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <p className="truncate text-sm font-medium text-[#111111] md:text-base">
-                        {proposal.title}
-                      </p>
+                  }
+                }}
+                className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+                      {proposal.title}
+                    </p>
 
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                          proposal.status
-                        )}`}
-                      >
-                        {getStatusLabel(proposal.status)}
-                      </span>
-                    </div>
-
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#9CA3AF]">
-                      {clientName && (
-                        <span>
-                          Client: {clientName}
-                        </span>
-                      )}
-
-                      {projectName && (
-                        <span>
-                          Project: {projectName}
-                        </span>
-                      )}
-
-                      {proposal.amount !== null && (
-                        <span>
-                          {formatAmount(proposal.amount)}
-                        </span>
-                      )}
-
-                      {proposal.valid_until && (
-                        <span>
-                          Valid until{" "}
-                          {formatValidUntil(
-                            proposal.valid_until
-                          )}
-                        </span>
-                      )}
-                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                        proposal.status
+                      )}`}
+                    >
+                      {getStatusLabel(proposal.status)}
+                    </span>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        editProposal(proposal);
-                      }}
-                      className="text-[#9CA3AF] transition hover:text-[#111111]"
-                      aria-label="Edit proposal"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#9CA3AF]">
+                    {clientName && (
+                      <span>
+                        Client: {clientName}
+                      </span>
+                    )}
 
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteProposal(proposal.id);
-                      }}
-                      className="text-[#9CA3AF] transition hover:text-red-500"
-                      aria-label="Delete proposal"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    {projectName && (
+                      <span>
+                        Project: {projectName}
+                      </span>
+                    )}
+
+                    {proposal.amount !== null && (
+                      <span>
+                        {formatAmount(proposal.amount)}
+                      </span>
+                    )}
+
+                    {proposal.valid_until && (
+                      <span>
+                        Valid until{" "}
+                        {formatValidUntil(
+                          proposal.valid_until
+                        )}
+                      </span>
+                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+
+                <div className="flex shrink-0 items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      editProposal(proposal);
+                    }}
+                    className="text-[#9CA3AF] transition hover:text-[#111111]"
+                    aria-label="Edit proposal"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteProposal(proposal.id);
+                    }}
+                    className="text-[#9CA3AF] transition hover:text-red-500"
+                    aria-label="Delete proposal"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  )}
+</div>
     </main>
   );
 }

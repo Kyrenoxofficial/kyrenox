@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  Activity,
   BarChart3,
   FileText,
   FolderKanban,
   LayoutDashboard,
   Menu,
+  MessageSquare,
   Settings,
   Sparkles,
   Users,
@@ -13,18 +15,37 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { createClient } from "./utils/client";
 
+const navigationItemClasses =
+  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition";
+
 export default function MobileSidebar() {
-    const supabase = createClient();
+  const supabase = createClient();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  function isActive(href: string) {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  function getItemClasses(href: string) {
+    return isActive(href)
+      ? `${navigationItemClasses} bg-[#F5F5F5] font-medium text-[#111111]`
+      : `${navigationItemClasses} text-[#6B7280] hover:bg-[#F8F9FA] hover:text-[#111111]`;
+  }
+
+  function closeSidebar() {
+    setOpen(false);
+  }
 
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-lg p-2 hover:bg-[#F5F5F5] md:hidden"
+        className="rounded-lg p-2 transition hover:bg-[#F5F5F5]"
         aria-label="Open navigation"
       >
         <Menu className="h-5 w-5" />
@@ -36,10 +57,10 @@ export default function MobileSidebar() {
             type="button"
             aria-label="Close navigation"
             className="absolute inset-0 bg-black/20"
-            onClick={() => setOpen(false)}
+            onClick={closeSidebar}
           />
 
-          <aside className="relative h-full w-72 border-r border-[#E5E7EB] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
+          <aside className="relative flex h-full w-72 flex-col border-r border-[#E5E7EB] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]">
             <div className="flex h-20 items-center justify-between border-b border-[#E5E7EB] px-6">
               <div className="flex items-center gap-2">
                 <img
@@ -47,6 +68,7 @@ export default function MobileSidebar() {
                   alt=""
                   className="h-7 w-7"
                 />
+
                 <span className="text-xl font-medium tracking-tight">
                   Kyrenox
                 </span>
@@ -54,15 +76,15 @@ export default function MobileSidebar() {
 
               <button
                 type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-lg p-2 hover:bg-[#F5F5F5]"
+                onClick={closeSidebar}
+                className="rounded-lg p-2 transition hover:bg-[#F5F5F5]"
                 aria-label="Close navigation"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <nav className="px-4 py-6">
+            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-28">
               <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
                 Workspace
               </p>
@@ -70,8 +92,8 @@ export default function MobileSidebar() {
               <div className="space-y-1">
                 <a
                   href="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/dashboard")}
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   Dashboard
@@ -79,8 +101,8 @@ export default function MobileSidebar() {
 
                 <a
                   href="/clients"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/clients")}
                 >
                   <Users className="h-4 w-4" />
                   Clients
@@ -88,8 +110,8 @@ export default function MobileSidebar() {
 
                 <a
                   href="/projects"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/projects")}
                 >
                   <FolderKanban className="h-4 w-4" />
                   Projects
@@ -97,38 +119,62 @@ export default function MobileSidebar() {
 
                 <a
                   href="/proposals"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/proposals")}
                 >
                   <FileText className="h-4 w-4" />
                   Proposals
                 </a>
 
                 <a
-  href="/content"
-  onClick={() => setOpen(false)}
-  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
->
-  <FileText className="h-4 w-4" />
-  Content
-</a>
+                  href="/content"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/content")}
+                >
+                  <FileText className="h-4 w-4" />
+                  Content
+                </a>
 
-<a
-  href="/automations"
-  onClick={() => setOpen(false)}
-  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
->
-  <Zap className="h-4 w-4" />
-  Automations
-</a>
+                <a
+                  href="/automations"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/automations")}
+                >
+                  <Zap className="h-4 w-4" />
+                  Automations
+                </a>
 
                 <a
                   href="/analytics"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/analytics")}
                 >
                   <BarChart3 className="h-4 w-4" />
                   Analytics
+                </a>
+
+                <a
+                  href="/activity"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/activity")}
+                >
+                  <Activity className="h-4 w-4" />
+                  Activity
+                </a>
+              </div>
+
+              <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+                Communication
+              </p>
+
+              <div className="space-y-1">
+                <a
+                  href="/messages"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/messages")}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Messages
                 </a>
               </div>
 
@@ -136,39 +182,42 @@ export default function MobileSidebar() {
                 Tools
               </p>
 
-              <a
-                href="/ai"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-              >
-                <Sparkles className="h-4 w-4" />
-                AI Workspace
-              </a>
+              <div className="space-y-1">
+                <a
+                  href="/ai-workspace"
+                  onClick={closeSidebar}
+                  className={getItemClasses("/ai-workspace")}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  AI Workspace
+                </a>
+              </div>
             </nav>
 
             <div className="absolute bottom-0 left-0 right-0 border-t border-[#E5E7EB] bg-white p-4">
               <a
                 href="/settings"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
+                onClick={closeSidebar}
+                className={getItemClasses("/settings")}
               >
                 <Settings className="h-4 w-4" />
                 Settings
               </a>
+
               <form
-  action={async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
-  }}
-  className="mt-2"
->
-  <button
-    type="submit"
-    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] hover:bg-[#F8F9FA]"
-  >
-    Log out
-  </button>
-</form>
+                action={async () => {
+                  await supabase.auth.signOut();
+                  window.location.href = "/login";
+                }}
+                className="mt-2"
+              >
+                <button
+                  type="submit"
+                  className={`${navigationItemClasses} w-full text-[#6B7280] hover:bg-[#F8F9FA] hover:text-[#111111]`}
+                >
+                  Log out
+                </button>
+              </form>
             </div>
           </aside>
         </div>
