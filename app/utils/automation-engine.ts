@@ -92,9 +92,20 @@ export async function runMessageReceivedAutomations(
     );
   }
 
-  const matchingAutomations = (
-    (automations ?? []) as Automation[]
-  ).filter((automation) => {
+  const candidateAutomations = (automations ?? []) as Automation[];
+
+console.log("[Automation Engine] Candidates:", {
+  messageId: input.messageId,
+  clientId: input.clientId,
+  projectId: input.projectId,
+  count: candidateAutomations.length,
+  automationIds: candidateAutomations.map(
+    (automation) => automation.id
+  ),
+});
+
+const matchingAutomations = candidateAutomations.filter(
+  (automation) => {
     return (
       matchesScope(
         automation,
@@ -106,9 +117,19 @@ export async function runMessageReceivedAutomations(
         input.content
       )
     );
-  });
+  }
+);
+
+console.log("[Automation Engine] Matching:", {
+  messageId: input.messageId,
+  count: matchingAutomations.length,
+  automationIds: matchingAutomations.map(
+    (automation) => automation.id
+  ),
+});
 
   for (const automation of matchingAutomations) {
+    console.log("[Automation Engine] Logging trigger:", automation.id);
     await createActivityLog({
       userId: input.userId,
       eventType: "automation.triggered",
