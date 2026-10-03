@@ -50,6 +50,32 @@ function getHeader(
   return entry?.[1]?.trim() || null;
 }
 
+
+function cleanIncomingEmailText(text: string) {
+  let cleaned = text.replace(/\r\n/g, "\n").trim();
+
+  const quotedSectionIndex = cleaned.search(
+    /(?:^|\n)\s*(?:On .+ wrote:|Am .+ schrieb .+:|-----Original Message-----)\s*(?:\n|$)/i
+  );
+
+  if (quotedSectionIndex !== -1) {
+    cleaned = cleaned.slice(0, quotedSectionIndex).trim();
+  }
+
+  const inlineQuotedSectionIndex = cleaned.search(
+    /\sOn .+ wrote:\s*>/i
+  );
+
+  if (inlineQuotedSectionIndex !== -1) {
+    cleaned = cleaned
+      .slice(0, inlineQuotedSectionIndex)
+      .trim();
+  }
+
+  return cleaned;
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.text();
@@ -236,7 +262,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const content = email.text?.trim() ?? "";
+    const content = cleanIncomingEmailText(
+  email.text?.trim() ?? ""
+);
 
     if (!content) {
       console.warn(
@@ -319,13 +347,23 @@ export async function POST(request: NextRequest) {
     });
 
 
-    await runMessageReceivedAutomations({
-  userId: inboundMailbox.user_id,
-  messageId: insertedMessage.id,
-  clientId,
-  projectId,
-  content,
-});
+    try {
+  await runMessageReceivedAutomations({
+    userId: inboundMailbox.user_id,
+    messageId: insertedMessage.id,
+    clientId,
+    projectId,
+    content,
+  });
+} catch (error) {
+  console.error(
+    "[Resend Webhook] Automation processing failed after message was saved:",
+    {
+      messageId: insertedMessage.id,
+      error,
+    }
+  );
+}
 
 
     console.log("Incoming message saved.", {

@@ -16,6 +16,7 @@ import {
 import MobileSidebar from "../MobileSidebar";
 import TaskList from "../TaskList";
 import NewMenu from "../NewMenu";
+import UnreadMessageBadge from "../UnreadMessageBadge";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -238,12 +239,13 @@ return (
 
     <div className="space-y-1">
       <a
-        href="/messages"
-        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
-      >
-        <MessageSquare className="h-4 w-4" />
-        Messages
-      </a>
+  href="/messages"
+  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+>
+  <MessageSquare className="h-4 w-4" />
+  <span>Messages</span>
+  <UnreadMessageBadge />
+</a>
     </div>
 
     <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">

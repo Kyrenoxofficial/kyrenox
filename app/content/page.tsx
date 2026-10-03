@@ -130,10 +130,10 @@ export default function ContentPage() {
         .from("content_items")
         .select("*")
         .eq("user_id", authData.user.id)
-        .order("publish_at", {
-          ascending: true,
-          nullsFirst: false,
-        }),
+        .order("created_at", {
+  ascending: false,
+  nullsFirst: false,
+}),
       supabase
         .from("clients")
         .select("id, name")

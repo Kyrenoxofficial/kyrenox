@@ -10,7 +10,9 @@ export type ActivityLogEventType =
   | "message.sent"
   | "message.failed"
   | "ai.reply.generated"
-  | "automation.triggered";
+  | "automation.triggered"
+  | "automation.security_checked"
+  | "automation.conflict_blocked";
 
 export type CreateActivityLogInput = {
   userId: string;

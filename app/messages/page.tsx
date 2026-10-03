@@ -18,9 +18,11 @@ import {
   Trash2,
   Users,
   Zap,
+   X,
 } from "lucide-react";
 import { createClient } from "../utils/client";
 import MobileSidebar from "../MobileSidebar";
+import UnreadMessageBadge from "../UnreadMessageBadge";
 
 
 type Client = {
@@ -150,16 +152,7 @@ const [loadError, setLoadError] = useState("");
         setClients(loadedClients);
         setProjects(loadedProjects);
 
-        if (loadedClients.length > 0) {
-          const firstClientWithMessages =
-            loadedClients.find((client) =>
-              loadedMessages.some(
-                (message: Message) => message.client_id === client.id
-              )
-            ) ?? loadedClients[0];
-
-          setSelectedClientId(firstClientWithMessages.id);
-        }
+       
       } catch (error) {
         console.error("Failed to load communication center:", error);
         setLoadError(
@@ -190,25 +183,45 @@ const [loadError, setLoadError] = useState("");
    channel = supabase
   .channel(`messages-${user.id}`)
   .on(
-    "postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "messages",
-      filter: `user_id=eq.${user.id}`,
-    },
-    async () => {
-      const response = await fetch("/api/messages");
+  "postgres_changes",
+  {
+    event: "INSERT",
+    schema: "public",
+    table: "messages",
+    filter: `user_id=eq.${user.id}`,
+  },
+  async () => {
+    const response = await fetch("/api/messages");
 
-      if (!response.ok) {
-        return;
-      }
-
-      const data = await response.json();
-
-      setMessages(data.messages ?? []);
+    if (!response.ok) {
+      return;
     }
-  )
+
+    const data = await response.json();
+
+    setMessages(data.messages ?? []);
+  }
+)
+.on(
+  "postgres_changes",
+  {
+    event: "UPDATE",
+    schema: "public",
+    table: "messages",
+    filter: `user_id=eq.${user.id}`,
+  },
+  async () => {
+    const response = await fetch("/api/messages");
+
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+
+    setMessages(data.messages ?? []);
+  }
+)
   .subscribe();
   }
 
@@ -893,12 +906,13 @@ const reviewingProject = reviewingMessage?.project_id
 
     <div className="space-y-1">
       <a
-        href="/messages"
-        className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
-      >
-        <MessageSquare className="h-4 w-4" />
-        Messages
-      </a>
+  href="/messages"
+  className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
+>
+  <MessageSquare className="h-4 w-4" />
+  <span>Messages</span>
+  <UnreadMessageBadge />
+</a>
     </div>
 
     <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
@@ -1096,13 +1110,13 @@ const reviewingProject = reviewingMessage?.project_id
         </div>
 
         <button
-          type="button"
-          onClick={() => setIsNewConversationOpen(false)}
-          className="text-[#9CA3AF] transition hover:text-[#111111]"
-          aria-label="Close"
-        >
-          ×
-        </button>
+  type="button"
+  onClick={() => setIsNewConversationOpen(false)}
+  className="flex h-9 w-9 items-center justify-center rounded-md text-[#9CA3AF] transition hover:bg-[#F3F4F6] hover:text-[#111111]"
+  aria-label="Close"
+>
+  <X className="h-5 w-5" />
+</button>
       </div>
 
       <div className="space-y-5 p-5">

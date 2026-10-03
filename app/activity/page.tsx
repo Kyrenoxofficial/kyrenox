@@ -25,7 +25,9 @@ type ActivityEventType =
   | "message.sent"
   | "message.failed"
   | "ai.reply.generated"
-  | "automation.triggered";
+  | "automation.triggered"
+  | "automation.security_checked"
+  | "automation.conflict_blocked";
 
 type ActivityLog = {
   id: number;
@@ -59,8 +61,16 @@ const eventFilters: Array<{
   { value: "message.updated", label: "Messages updated" },
   { value: "message.draft_created", label: "Drafts created" },
   { value: "message.failed", label: "Failed messages" },
-  { value: "ai.reply.generated", label: "AI replies" },
+    { value: "ai.reply.generated", label: "AI replies" },
   { value: "automation.triggered", label: "Automations" },
+  {
+    value: "automation.security_checked",
+    label: "Security checks",
+  },
+  {
+    value: "automation.conflict_blocked",
+    label: "Blocked auto-sends",
+  },
 ];
 
 function getActivityEventLabel(eventType: ActivityEventType) {
@@ -81,6 +91,10 @@ function getActivityEventLabel(eventType: ActivityEventType) {
       return "AI reply generated";
     case "automation.triggered":
       return "Automation triggered";
+      case "automation.security_checked":
+  return "Security check";
+      case "automation.conflict_blocked":
+      return "Auto-send blocked";
   }
 }
 
@@ -107,6 +121,12 @@ function getActivityIcon(eventType: ActivityEventType) {
     case "message.updated":
     case "message.draft_created":
       return Bot;
+
+      case "automation.security_checked":
+  return CheckCircle2;
+
+      case "automation.conflict_blocked":
+      return CircleAlert;
   }
 }
 
@@ -129,6 +149,9 @@ function getActivityIconClasses(eventType: ActivityEventType) {
 
     case "automation.triggered":
       return "bg-[#F3F4F6] text-[#111111]";
+
+          case "automation.conflict_blocked":
+      return "bg-[#FFF7ED] text-[#EA580C]";
 
     case "message.updated":
     case "message.draft_created":

@@ -133,7 +133,6 @@ const [clientId, setClientId] = useState("");
 const [projectId, setProjectId] = useState("");
 const [notes, setNotes] = useState("");
 const [lastRunAt, setLastRunAt] = useState("");
-const [nextRunAt, setNextRunAt] = useState("");
 
   useEffect(() => {
     loadData();
@@ -191,7 +190,6 @@ setProjects(projectsData || []);
   setProjectId("");
   setNotes("");
   setLastRunAt("");
-  setNextRunAt("");
   setEditingAutomationId(null);
   setShowForm(false);
 }
@@ -221,13 +219,7 @@ setProjects(projectsData || []);
         : ""
     );
 
-    setNextRunAt(
-      automation.next_run_at
-        ? new Date(automation.next_run_at)
-            .toISOString()
-            .slice(0, 16)
-        : ""
-    );
+    
 
     setEditingAutomationId(automation.id);
     setShowForm(true);
@@ -248,7 +240,9 @@ setProjects(projectsData || []);
     const payload = {
   name: name.trim(),
   tool,
-  trigger: trigger.trim() || null,
+  trigger:
+  trigger.replace(/[\u200B-\u200D\uFEFF]/g, "").trim() ||
+  null,
   action: action.trim() || null,
   status,
   mode,
@@ -264,9 +258,7 @@ setProjects(projectsData || []);
   last_run_at: lastRunAt
     ? new Date(lastRunAt).toISOString()
     : null,
-  next_run_at: nextRunAt
-    ? new Date(nextRunAt).toISOString()
-    : null,
+  
 };
 
     if (editingAutomationId) {
@@ -427,7 +419,7 @@ setProjects(projectsData || []);
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
   <div>
     <label className="mb-1.5 block text-base font-medium text-[#111111]">
-      Tool
+      Automation platform
     </label>
 
     <select
@@ -480,19 +472,24 @@ setProjects(projectsData || []);
   </div>
 </div>
 
-              <div>
-                <label className="mb-1.5 block text-base font-medium text-[#111111]">
-                  Trigger
-                </label>
+             <div>
+  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+    Trigger
+  </label>
 
-                <input
-                  type="text"
-                  value={trigger}
-                  onChange={(e) => setTrigger(e.target.value)}
-                  placeholder="e.g. New client created"
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
-                />
-              </div>
+  <select
+    value={trigger}
+    onChange={(e) => setTrigger(e.target.value)}
+    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
+  >
+    <option value="">Select trigger</option>
+    <option value="message.received">Message received</option>
+    <option value="schedule">Scheduled</option>
+  </select>
+</div>
+
+
+
 
               <div>
                 <label className="mb-1.5 block text-base font-medium text-[#111111]">
@@ -551,7 +548,7 @@ setProjects(projectsData || []);
                     onChange={(e) => setClientId(e.target.value)}
                     className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition focus:border-[#111111]"
                   >
-                    <option value="">No client</option>
+                    <option value="">All clients</option>
 
                     {clients.map((client) => (
                       <option key={client.id} value={client.id}>
@@ -597,16 +594,8 @@ setProjects(projectsData || []);
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-base font-medium text-[#111111]">
-                    Next Run
-                  </label>
+                  
 
-                  <input
-                    type="datetime-local"
-                    value={nextRunAt}
-                    onChange={(e) => setNextRunAt(e.target.value)}
-                    className="block w-full min-w-0 max-w-full appearance-none rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none transition..."
-                  />
                 </div>
               </div>
 
@@ -754,15 +743,19 @@ setProjects(projectsData || []);
                           </p>
                         </div>
 
-                        <div>
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
-                            Next Run
-                          </p>
+                        
+<div>
+  <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">
+    Last Run
+  </p>
 
-                          <p className="mt-1 text-sm text-[#6B7280]">
-                            {formatDate(automation.next_run_at)}
-                          </p>
-                        </div>
+  <p className="mt-1 text-sm text-[#6B7280]">
+    {automation.last_run_at
+      ? formatDate(automation.last_run_at)
+      : "Never"}
+  </p>
+</div>
+
 
                         <div>
                           <p className="text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF]">

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "./utils/client";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Search, Trash2 } from "lucide-react";
 
 type Task = {
   id: number;
@@ -21,6 +21,7 @@ project?: {
 export default function TaskList({ initialTasks }: { initialTasks: Task[] }) {
   const [tasks, setTasks] = useState(initialTasks);
   const [projects, setProjects] = useState<{ id: number; name: string }[]>([]);
+  const [taskSearch, setTaskSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [taskTitle, setTaskTitle] = useState("");
@@ -146,10 +147,42 @@ function editTask(task: Task) {
   router.refresh();
 }
 
+
+const filteredTasks = tasks.filter((task) => {
+  const query = taskSearch.trim().toLowerCase();
+
+  if (!query) {
+    return true;
+  }
+
+  const projectName = Array.isArray(task.project)
+    ? task.project[0]?.name ?? ""
+    : task.project?.name ?? "";
+
+  return (
+    task.title.toLowerCase().includes(query) ||
+    projectName.toLowerCase().includes(query)
+  );
+});
+
+
 console.log("TASKS:", tasks);
 
 return (
   <div className="mt-6 space-y-4">
+
+<div className="relative">
+  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+
+  <input
+    type="text"
+    value={taskSearch}
+    onChange={(e) => setTaskSearch(e.target.value)}
+    placeholder="Search tasks..."
+    className="h-10 w-full rounded-md border border-[#E5E7EB] bg-white pl-9 pr-3 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+  />
+</div>
+
     {showEditForm && (
   <div className="mb-6 rounded-lg border border-[#E5E7EB] bg-white p-5">
     <input
@@ -248,7 +281,14 @@ return (
   </div>
 )}
     <div className="max-h-[220px] overflow-y-auto pr-2">
-  {tasks.map((task) => (
+  {filteredTasks.length === 0 ? (
+  <div className="py-6 text-center text-sm text-[#9CA3AF]">
+    No tasks found.
+  </div>
+) : (
+  filteredTasks.map((task) => (
+
+
       <div
   key={task.id}
   role="link"
@@ -340,7 +380,10 @@ return (
   </button>
 </div>
 </div> 
-))} 
+
+))
+)}
+
 </div> 
 </div>
 );

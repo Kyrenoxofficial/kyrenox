@@ -23,7 +23,6 @@ type Automation = {
   project_id: number | null;
   notes: string | null;
   last_run_at: string | null;
-  next_run_at: string | null;
   created_at: string;
 };
 
@@ -132,7 +131,7 @@ const [description, setDescription] = useState("");
   const [projectId, setProjectId] = useState("");
   const [notes, setNotes] = useState("");
   const [lastRunAt, setLastRunAt] = useState("");
-  const [nextRunAt, setNextRunAt] = useState("");
+  
 
   useEffect(() => {
     loadAutomation();
@@ -220,13 +219,7 @@ setDescription(automationData.description || "");
         : ""
     );
 
-    setNextRunAt(
-      automationData.next_run_at
-        ? new Date(automationData.next_run_at)
-            .toISOString()
-            .slice(0, 16)
-        : ""
-    );
+    
 
     setLoading(false);
   }
@@ -272,13 +265,7 @@ setDescription(automation.description || "");
         : ""
     );
 
-    setNextRunAt(
-      automation.next_run_at
-        ? new Date(automation.next_run_at)
-            .toISOString()
-            .slice(0, 16)
-        : ""
-    );
+    
 
     setEditing(false);
   }
@@ -310,9 +297,7 @@ setDescription(automation.description || "");
       last_run_at: lastRunAt
         ? new Date(lastRunAt).toISOString()
         : null,
-      next_run_at: nextRunAt
-        ? new Date(nextRunAt).toISOString()
-        : null,
+     
     };
 
     const { error } = await supabase
@@ -435,8 +420,8 @@ setDescription(automation.description || "");
                 </a>
               ) : (
                 <p className="mt-2 text-sm text-[#9CA3AF]">
-                  No client
-                </p>
+  All clients
+</p>
               )}
             </div>
 
@@ -532,13 +517,7 @@ setDescription(automation.description || "");
               </p>
             </div>
 
-            <div className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
-              <p className="text-xs text-[#6B7280]">Next Run</p>
-
-              <p className="mt-2 text-sm font-medium text-[#111111]">
-                {formatDate(automation.next_run_at)}
-              </p>
-            </div>
+            
           </div>
 
           {automation.notes && (
@@ -750,18 +729,7 @@ setDescription(automation.description || "");
                 />
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                  Next Run
-                </label>
-
-                <input
-                  type="datetime-local"
-                  value={nextRunAt}
-                  onChange={(e) => setNextRunAt(e.target.value)}
-                  className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm text-[#111111] outline-none transition focus:border-[#111111]"
-                />
-              </div>
+              
             </div>
 
             <div>

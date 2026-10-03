@@ -14,7 +14,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "./utils/client";
 
@@ -25,10 +25,81 @@ export default function MobileSidebar() {
   const supabase = createClient();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
+
+
+  useEffect(() => {
+  let cancelled = false;
+  let channel: ReturnType<typeof supabase.channel> | null = null;
+
+  async function initializeUnreadMessages() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user || cancelled) {
+      return;
+    }
+
+    const userId = user.id;
+
+    async function loadUnreadCount() {
+      const { count, error } = await supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("direction", "incoming")
+        .eq("status", "received")
+        .is("read_at", null);
+
+      if (error) {
+        console.error("Failed to load unread message count:", error);
+        return;
+      }
+
+      if (!cancelled) {
+        setUnreadMessageCount(count ?? 0);
+      }
+    }
+
+    await loadUnreadCount();
+
+    if (cancelled) {
+      return;
+    }
+
+    channel = supabase
+      .channel(`sidebar-messages-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "messages",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          loadUnreadCount();
+        }
+      )
+      .subscribe();
+  }
+
+  initializeUnreadMessages();
+
+  return () => {
+    cancelled = true;
+
+    if (channel) {
+      supabase.removeChannel(channel);
+    }
+  };
+}, []);
+
 
   function getItemClasses(href: string) {
     return isActive(href)
@@ -169,13 +240,21 @@ export default function MobileSidebar() {
 
               <div className="space-y-1">
                 <a
-                  href="/messages"
-                  onClick={closeSidebar}
-                  className={getItemClasses("/messages")}
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  Messages
-                </a>
+  href="/messages"
+  onClick={closeSidebar}
+  className={`${getItemClasses("/messages")} justify-between`}
+>
+  <span className="flex items-center gap-3">
+    <MessageSquare className="h-4 w-4" />
+    Messages
+  </span>
+
+  {unreadMessageCount > 0 && (
+    <span className="min-w-5 rounded-full bg-[#2563EB] px-1.5 py-0.5 text-center text-[10px] font-medium text-white">
+      {unreadMessageCount}
+    </span>
+  )}
+</a>
               </div>
 
               <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
