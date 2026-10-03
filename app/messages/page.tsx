@@ -307,12 +307,7 @@ useEffect(() => {
     return;
   }
 
-  requestAnimationFrame(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    });
-  });
+  
 }, [editingMessageId]);
 
 
