@@ -1133,7 +1133,7 @@ const reviewingProject = reviewingMessage?.project_id
             }
             placeholder="Search by name or email..."
             autoFocus
-            className="mt-2 w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+            className="mt-2 w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
           />
         </div>
 
@@ -1180,7 +1180,7 @@ const reviewingProject = reviewingMessage?.project_id
                 setNewClientName(event.target.value)
               }
               placeholder="Client name"
-              className="w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+              className="w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
             />
 
             <input
@@ -1190,7 +1190,7 @@ const reviewingProject = reviewingMessage?.project_id
                 setNewClientEmail(event.target.value)
               }
               placeholder="Email address"
-              className="w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-sm text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+              className="w-full rounded-md border border-[#D1D5DB] px-3 py-2.5 text-base text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
             />
 
             {clientCreateError && (
@@ -1557,7 +1557,7 @@ const reviewingProject = reviewingMessage?.project_id
         }
         placeholder="Write a message draft..."
         rows={1}
-        className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-3 text-sm leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111]"
+        className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-3 text-base leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
       />
 
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
