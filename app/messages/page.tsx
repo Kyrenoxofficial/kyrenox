@@ -1091,7 +1091,7 @@ const reviewingProject = reviewingMessage?.project_id
 
 
 {isNewConversationOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4">
+  <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/20 p-4 pt-6 md:items-center md:pt-4">
     <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-white shadow-xl">
       <div className="flex items-center justify-between border-b border-[#E5E7EB] px-5 py-4">
         <div>
