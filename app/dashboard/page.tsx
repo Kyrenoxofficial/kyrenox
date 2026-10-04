@@ -4,6 +4,7 @@ import { createClient } from "../utils/supabase/server";
 import {
   Activity,
   BarChart3,
+  BookOpen,
   FileText,
   FolderKanban,
   LayoutDashboard,
@@ -262,6 +263,31 @@ return (
       </a>
     </div>
   </nav>
+
+
+
+<p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+  Help & Support
+</p>
+
+<div className="space-y-1">
+  <a
+    href="/help"
+    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+  >
+    <BookOpen className="h-4 w-4" />
+    Help Center
+  </a>
+
+  <a
+    href="/help/support"
+    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+  >
+    <MessageSquare className="h-4 w-4" />
+    Contact Support
+  </a>
+</div>
+
 
   <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
     <a

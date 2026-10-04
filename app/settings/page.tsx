@@ -1,8 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  BookOpen,
+  Eye,
+  EyeOff,
+  FileText,
+  FolderKanban,
+  LayoutDashboard,
+  MessageSquare,
+  Settings as SettingsIcon,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
+import MobileSidebar from "../MobileSidebar";
+import UnreadMessageBadge from "../UnreadMessageBadge";
 import { createClient } from "../utils/client";
 
 export default function SettingsPage() {
@@ -78,162 +94,335 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F9FA] px-6 py-8 md:px-9">
-      <div>
-        <Link
-          href="/dashboard"
-          className="mb-8 block text-sm text-[#9CA3AF] transition hover:text-[#111111]"
-        >
-          ← Back to Dashboard
-        </Link>
+  <main className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]">
+    <div className="flex h-full">
+      <aside className="hidden h-screen w-64 shrink-0 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
+        <div className="flex h-20 items-center border-b border-[#E5E7EB] px-6">
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img
+              src="/kyrenox-logo.svg"
+              alt=""
+              className="h-7 w-7"
+            />
+            <span className="text-xl font-medium tracking-tight">
+              Kyrenox
+            </span>
+          </Link>
+        </div>
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight text-[#111111]">
-            Settings
-          </h1>
-
-          <p className="mt-1 text-sm text-[#6B7280]">
-            Manage your account and security settings.
+        <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
+          <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+            Workspace
           </p>
-        </div>
 
-        <div className="mx-auto max-w-3xl space-y-6">
-          <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
-            <div>
-              <h2 className="text-base font-semibold text-[#111111]">
-                Account
+          <div className="space-y-1">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Link>
+
+            <Link
+              href="/clients"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <Users className="h-4 w-4" />
+              Clients
+            </Link>
+
+            <Link
+              href="/projects"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <FolderKanban className="h-4 w-4" />
+              Projects
+            </Link>
+
+            <Link
+              href="/proposals"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <FileText className="h-4 w-4" />
+              Proposals
+            </Link>
+
+            <Link
+              href="/content"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <FileText className="h-4 w-4" />
+              Content
+            </Link>
+
+            <Link
+              href="/automations"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <Zap className="h-4 w-4" />
+              Automations
+            </Link>
+
+            <Link
+              href="/analytics"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </Link>
+
+            <Link
+              href="/activity"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <Activity className="h-4 w-4" />
+              Activity
+            </Link>
+          </div>
+
+          <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+            Communication
+          </p>
+
+          <div className="space-y-1">
+            <Link
+              href="/messages"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Messages</span>
+              <UnreadMessageBadge />
+            </Link>
+          </div>
+
+          <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+            Tools
+          </p>
+
+          <div className="space-y-1">
+            <Link
+              href="/ai-workspace"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Workspace
+            </Link>
+          </div>
+
+          <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+            Help & Support
+          </p>
+
+          <div className="space-y-1">
+            <Link
+              href="/help"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <BookOpen className="h-4 w-4" />
+              Help Center
+            </Link>
+
+            <Link
+              href="/help/support"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Contact Support
+            </Link>
+          </div>
+        </nav>
+
+        <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
+          <Link
+            href="/settings"
+            className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
+          >
+            <SettingsIcon className="h-4 w-4" />
+            Settings
+          </Link>
+        </div>
+      </aside>
+
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <header className="flex h-20 shrink-0 items-center justify-between border-b border-[#E5E7EB] bg-white px-6 md:px-10">
+          <div className="md:hidden">
+            <MobileSidebar />
+          </div>
+
+          <div>
+            <p className="text-sm text-[#6B7280]">Account</p>
+            <h1 className="text-lg font-semibold">Settings</h1>
+          </div>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="w-full px-4 py-8 md:px-9 md:py-8">
+            <Link
+              href="/dashboard"
+              className="mb-8 inline-flex items-center text-sm text-[#9CA3AF] transition hover:text-[#111111]"
+            >
+              ← Back to Dashboard
+            </Link>
+
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold tracking-tight text-[#111111]">
+                Settings
               </h2>
 
               <p className="mt-1 text-sm text-[#6B7280]">
-                Your current account information.
+                Manage your account and security settings.
               </p>
             </div>
 
-            <div className="mt-5 max-w-xl">
-              <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                Email
-              </label>
+            <div className="mx-auto max-w-3xl space-y-6">
+              <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
+                <div>
+                  <h2 className="text-base font-semibold text-[#111111]">
+                    Account
+                  </h2>
 
-              <input
-                type="email"
-                value={loading ? "" : email}
-                readOnly
-                placeholder={loading ? "Loading..." : ""}
-                className="w-full rounded-md border border-[#D1D5DB] bg-[#F8F9FA] px-3 py-2.5 text-base text-[#6B7280] outline-none"
-              />
-            </div>
-          </section>
-
-          <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
-            <div>
-              <h2 className="text-base font-semibold text-[#111111]">
-                Security
-              </h2>
-
-              <p className="mt-1 text-sm text-[#6B7280]">
-                Keep your Kyrenox account secure by updating your password.
-              </p>
-            </div>
-
-            <div className="mt-5 max-w-xl space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                  New password
-                </label>
-
-                <div className="relative">
-  <input
-    type={showNewPassword ? "text" : "password"}
-    value={newPassword}
-    onChange={(e) => setNewPassword(e.target.value)}
-    placeholder="Enter a new password"
-    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 pr-11 text-base text-[#111111] outline-none focus:border-[#111111]"
-  />
-
-  <button
-    type="button"
-    onClick={() => setShowNewPassword((value) => !value)}
-    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition hover:text-[#111111]"
-    aria-label={showNewPassword ? "Hide password" : "Show password"}
-  >
-    {showNewPassword ? (
-      <EyeOff className="h-4 w-4" />
-    ) : (
-      <Eye className="h-4 w-4" />
-    )}
-  </button>
-</div>
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#111111]">
-                  Confirm new password
-                </label>
-
-                <div className="relative">
-  <input
-    type={showConfirmPassword ? "text" : "password"}
-    value={confirmPassword}
-    onChange={(e) => setConfirmPassword(e.target.value)}
-    placeholder="Confirm your new password"
-    className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 pr-11 text-base text-[#111111] outline-none focus:border-[#111111]"
-  />
-
-  <button
-    type="button"
-    onClick={() => setShowConfirmPassword((value) => !value)}
-    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition hover:text-[#111111]"
-    aria-label={
-      showConfirmPassword ? "Hide password" : "Show password"
-    }
-  >
-    {showConfirmPassword ? (
-      <EyeOff className="h-4 w-4" />
-    ) : (
-      <Eye className="h-4 w-4" />
-    )}
-  </button>
-</div>
-              </div>
-
-              {errorMessage && (
-                <div className="rounded-md border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#B91C1C]">
-                  {errorMessage}
+                  <p className="mt-1 text-sm text-[#6B7280]">
+                    Your current account information.
+                  </p>
                 </div>
-              )}
 
-              {successMessage && (
-                <div className="rounded-md border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#15803D]">
-                  {successMessage}
+                <div className="mt-5 max-w-xl">
+                  <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                    Email
+                  </label>
+
+                  <input
+                    type="email"
+                    value={loading ? "" : email}
+                    readOnly
+                    placeholder={loading ? "Loading..." : ""}
+                    className="w-full rounded-md border border-[#D1D5DB] bg-[#F8F9FA] px-3 py-2.5 text-base text-[#6B7280] outline-none"
+                  />
                 </div>
-              )}
+              </section>
 
-              <button
-                type="button"
-                onClick={updatePassword}
-                disabled={savingPassword}
-                className="rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {savingPassword ? "Updating..." : "Update Password"}
-              </button>
+              <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
+                <div>
+                  <h2 className="text-base font-semibold text-[#111111]">
+                    Security
+                  </h2>
+
+                  <p className="mt-1 text-sm text-[#6B7280]">
+                    Keep your Kyrenox account secure by updating your password.
+                  </p>
+                </div>
+
+                <div className="mt-5 max-w-xl space-y-4">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                      New password
+                    </label>
+
+                    <div className="relative">
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Enter a new password"
+                        className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 pr-11 text-base text-[#111111] outline-none focus:border-[#111111]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowNewPassword((value) => !value)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition hover:text-[#111111]"
+                        aria-label={
+                          showNewPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showNewPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+                      Confirm new password
+                    </label>
+
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm your new password"
+                        className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 pr-11 text-base text-[#111111] outline-none focus:border-[#111111]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword((value) => !value)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] transition hover:text-[#111111]"
+                        aria-label={
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {errorMessage && (
+                    <div className="rounded-md border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#B91C1C]">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  {successMessage && (
+                    <div className="rounded-md border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#15803D]">
+                      {successMessage}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={updatePassword}
+                    disabled={savingPassword}
+                    className="rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {savingPassword ? "Updating..." : "Update Password"}
+                  </button>
+                </div>
+              </section>
+
+              <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
+                <div>
+                  <h2 className="text-base font-semibold text-[#111111]">
+                    Workspace
+                  </h2>
+
+                  <p className="mt-1 text-sm leading-6 text-[#6B7280]">
+                    Kyrenox brings your clients, projects, tasks, proposals,
+                    content, automations, analytics, and AI workflows together
+                    in one workspace.
+                  </p>
+                </div>
+              </section>
             </div>
-          </section>
-
-          <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
-            <div>
-              <h2 className="text-base font-semibold text-[#111111]">
-                Workspace
-              </h2>
-
-              <p className="mt-1 text-sm leading-6 text-[#6B7280]">
-                Kyrenox brings your clients, projects, tasks, proposals,
-                content, automations, analytics, and AI workflows together in
-                one workspace.
-              </p>
-            </div>
-          </section>
+          </div>
         </div>
-      </div>
-    </main>
-  );
+      </section>
+    </div>
+  </main>
+);
 }

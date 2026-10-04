@@ -3,6 +3,7 @@
 import {
   Activity,
   BarChart3,
+  BookOpen,
   FileText,
   FolderKanban,
   LayoutDashboard,
@@ -155,7 +156,7 @@ export default function MobileSidebar() {
               </button>
             </div>
 
-            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-28">
+            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-56">
               <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
                 Workspace
               </p>
@@ -271,33 +272,61 @@ export default function MobileSidebar() {
                   AI Workspace
                 </a>
               </div>
+
+
             </nav>
 
             <div className="absolute bottom-0 left-0 right-0 border-t border-[#E5E7EB] bg-white p-4">
-              <a
-                href="/settings"
-                onClick={closeSidebar}
-                className={getItemClasses("/settings")}
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </a>
+  <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+    Help & Support
+  </p>
 
-              <form
-                action={async () => {
-                  await supabase.auth.signOut();
-                  window.location.href = "/login";
-                }}
-                className="mt-2"
-              >
-                <button
-                  type="submit"
-                  className={`${navigationItemClasses} w-full text-[#6B7280] hover:bg-[#F8F9FA] hover:text-[#111111]`}
-                >
-                  Log out
-                </button>
-              </form>
-            </div>
+  <div className="space-y-1">
+    <a
+      href="/help"
+      onClick={closeSidebar}
+      className={getItemClasses("/help")}
+    >
+      <BookOpen className="h-4 w-4" />
+      Help Center
+    </a>
+
+    <a
+      href="/help/support"
+      onClick={closeSidebar}
+      className={getItemClasses("/help/support")}
+    >
+      <MessageSquare className="h-4 w-4" />
+      Contact Support
+    </a>
+  </div>
+
+  <div className="mt-3 border-t border-[#E5E7EB] pt-3">
+    <a
+      href="/settings"
+      onClick={closeSidebar}
+      className={getItemClasses("/settings")}
+    >
+      <Settings className="h-4 w-4" />
+      Settings
+    </a>
+
+    <form
+      action={async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/login";
+      }}
+      className="mt-2"
+    >
+      <button
+        type="submit"
+        className={`${navigationItemClasses} w-full text-[#6B7280] hover:bg-[#F8F9FA] hover:text-[#111111]`}
+      >
+        Log out
+      </button>
+    </form>
+  </div>
+</div>
           </aside>
         </div>
       )}
