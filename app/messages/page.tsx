@@ -1477,7 +1477,7 @@ const reviewingProject = reviewingMessage?.project_id
                     </div>
 
                     {/* Composer */}
-                    <div className="border-t border-[#E5E7EB] bg-white p-4 md:p-5">
+                    <div className="border-t border-[#E5E7EB] bg-white p-3 md:p-5">
                       {(savingError || aiError) && (
   <div className="mb-3 space-y-1">
     {savingError && (
@@ -1586,7 +1586,7 @@ const reviewingProject = reviewingMessage?.project_id
   }}
   placeholder="Write a message draft..."
   rows={1}
-        className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-3 text-base leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
+        className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-2.5 text-base leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
       />
 
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
