@@ -103,7 +103,35 @@ const [loadError, setLoadError] = useState("");
   const draftTextareaRef = useRef<HTMLTextAreaElement>(null);
 
 
-  
+  useEffect(() => {
+  const viewport = window.visualViewport;
+
+  if (!viewport) {
+    return;
+  }
+
+  const updateKeyboardOffset = () => {
+    const keyboardOffset = Math.max(
+      0,
+      window.innerHeight - viewport.height - viewport.offsetTop
+    );
+
+    document.documentElement.style.setProperty(
+      "--kyrenox-keyboard-offset",
+      `${keyboardOffset}px`
+    );
+  };
+
+  updateKeyboardOffset();
+
+  viewport.addEventListener("resize", updateKeyboardOffset);
+  viewport.addEventListener("scroll", updateKeyboardOffset);
+
+  return () => {
+    viewport.removeEventListener("resize", updateKeyboardOffset);
+    viewport.removeEventListener("scroll", updateKeyboardOffset);
+  };
+}, []);
 
   useEffect(() => {
     async function loadData() {
@@ -1471,7 +1499,12 @@ const reviewingProject = reviewingMessage?.project_id
                     </div>
 
                     {/* Composer */}
-                   <div className="relative z-10 border-t border-[#E5E7EB] bg-white p-3 md:p-5">
+                   <div
+  className="fixed inset-x-0 z-20 border-t border-[#E5E7EB] bg-white p-3 md:static md:z-10 md:p-5"
+  style={{
+    bottom: "var(--kyrenox-keyboard-offset, 0px)",
+  }}
+>
                       {(savingError || aiError) && (
   <div className="mb-3 space-y-1">
     {savingError && (
