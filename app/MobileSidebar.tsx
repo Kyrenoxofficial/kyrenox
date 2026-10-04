@@ -112,6 +112,23 @@ export default function MobileSidebar() {
     setOpen(false);
   }
 
+
+useEffect(() => {
+  if (!open) return;
+
+  const originalBodyOverflow = document.body.style.overflow;
+  const originalHtmlOverflow = document.documentElement.style.overflow;
+
+  document.body.style.overflow = "hidden";
+  document.documentElement.style.overflow = "hidden";
+
+  return () => {
+    document.body.style.overflow = originalBodyOverflow;
+    document.documentElement.style.overflow = originalHtmlOverflow;
+  };
+}, [open]);
+
+
   return (
     <>
       <button
@@ -124,7 +141,7 @@ export default function MobileSidebar() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 overscroll-contain md:hidden">
           <button
             type="button"
             aria-label="Close navigation"
