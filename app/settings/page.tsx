@@ -25,9 +25,10 @@ export default function SettingsPage() {
   const supabase = createClient();
 
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(true);
+const [senderName, setSenderName] = useState("");
+const [loading, setLoading] = useState(true);
 
-  const [newPassword, setNewPassword] = useState("");
+const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -35,6 +36,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [savingSenderName, setSavingSenderName] = useState(false);
+const [senderNameSuccess, setSenderNameSuccess] = useState("");
+const [senderNameError, setSenderNameError] = useState("");
 
   useEffect(() => {
     async function loadSettings() {
@@ -48,11 +52,54 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       }
 
       setEmail(user.email ?? "");
-      setLoading(false);
+
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("sender_name")
+  .eq("user_id", user.id)
+  .single();
+
+setSenderName(profile?.sender_name ?? "");
+
+setLoading(false);
     }
 
     loadSettings();
   }, []);
+
+
+  async function updateSenderName() {
+  setSenderNameSuccess("");
+  setSenderNameError("");
+
+  setSavingSenderName(true);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    window.location.href = "/login";
+    return;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      sender_name: senderName.trim() || null,
+    })
+    .eq("user_id", user.id);
+
+  if (error) {
+    setSenderNameError(error.message);
+    setSavingSenderName(false);
+    return;
+  }
+
+  setSenderNameSuccess("Sender name updated successfully.");
+  setSavingSenderName(false);
+}
+
 
   async function updatePassword() {
     setSuccessMessage("");
@@ -301,6 +348,61 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   />
                 </div>
               </section>
+
+
+<section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
+  <div>
+    <h2 className="text-base font-semibold text-[#111111]">
+      Communication
+    </h2>
+
+    <p className="mt-1 text-sm text-[#6B7280]">
+      Control how your name appears when you communicate with clients through Kyrenox.
+    </p>
+  </div>
+
+  <div className="mt-5 max-w-xl space-y-4">
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-[#111111]">
+        Sender name
+      </label>
+
+      <input
+        type="text"
+        value={loading ? "" : senderName}
+        onChange={(e) => setSenderName(e.target.value)}
+        placeholder="e.g. Anna Müller"
+        className="w-full rounded-md border border-[#D1D5DB] bg-white px-3 py-2.5 text-base text-[#111111] outline-none focus:border-[#111111]"
+      />
+
+      <p className="mt-2 text-xs leading-5 text-[#6B7280]">
+        This name is shown to clients when you send messages through Kyrenox.
+      </p>
+    </div>
+
+    {senderNameError && (
+      <div className="rounded-md border border-[#FECACA] bg-[#FEF2F2] px-4 py-3 text-sm text-[#B91C1C]">
+        {senderNameError}
+      </div>
+    )}
+
+    {senderNameSuccess && (
+      <div className="rounded-md border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-sm text-[#15803D]">
+        {senderNameSuccess}
+      </div>
+    )}
+
+    <button
+      type="button"
+      onClick={updateSenderName}
+      disabled={savingSenderName || loading}
+      className="rounded-md bg-[#111111] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222] disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {savingSenderName ? "Saving..." : "Save Sender Name"}
+    </button>
+  </div>
+</section>
+
 
               <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 shadow-sm">
                 <div>

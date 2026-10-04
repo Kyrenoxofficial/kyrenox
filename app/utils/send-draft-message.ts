@@ -33,8 +33,31 @@ function getFromEmail() {
     throw new Error("RESEND_FROM_EMAIL is not configured.");
   }
 
-  return fromEmail;
+  const match = fromEmail.match(/<([^>]+)>/);
+
+  return (match?.[1] ?? fromEmail).trim();
 }
+
+
+async function getSenderName(
+  admin: ReturnType<typeof createAdminClient>,
+  userId: string
+) {
+  const { data, error } = await admin
+    .from("profiles")
+    .select("sender_name")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to load sender name:", error);
+  }
+
+  const senderName = data?.sender_name?.trim();
+
+  return senderName || "Freelancer";
+}
+
 
 export async function sendDraftMessage({
   userId,
@@ -99,9 +122,13 @@ export async function sendDraftMessage({
   }
 
   const resend = getResendClient();
-  const fromEmail = getFromEmail();
-  const inboundMailbox =
-    await getOrCreateInboundMailbox(userId);
+const fromEmail = getFromEmail();
+const senderName = await getSenderName(
+  admin,
+  userId
+);
+const inboundMailbox =
+  await getOrCreateInboundMailbox(userId);
 
   const subject = project?.name
     ? `Re: ${project.name}`
@@ -109,13 +136,15 @@ export async function sendDraftMessage({
 
   const { data, error: resendError } =
     await resend.emails.send(
-      {
-        from: fromEmail,
-        to: [client.email],
-        subject,
-        text: content,
-        replyTo: inboundMailbox.email_address,
-      },
+
+     {
+  from: `${senderName} <${fromEmail}>`,
+  to: [client.email],
+  subject,
+  text: content,
+  replyTo: inboundMailbox.email_address,
+},
+
       {
         idempotencyKey: `message-send/${message.id}`,
       }
