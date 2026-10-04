@@ -274,23 +274,33 @@ const categories: Category[] = [
   },
 
   {
-    title: "Settings",
-    description:
-      "Manage your account, security and workspace information.",
-    icon: Settings,
-    guides: [
-      {
-        title: "Change your password",
-        description:
-          "Update your Kyrenox account password from Settings.",
-        content: [
-          "Open Settings and go to the Security section.",
-          "Enter your new password and confirm it before submitting the change.",
-          "Kyrenox requires the password to meet the minimum requirement shown in the form.",
-        ],
-      },
-    ],
-  },
+  title: "Settings",
+  description:
+    "Manage your account, security and workspace information.",
+  icon: Settings,
+  guides: [
+    {
+      title: "Change your password",
+      description:
+        "Update your Kyrenox account password from Settings.",
+      content: [
+        "Open Settings and go to the Security section.",
+        "Enter your new password and confirm it before submitting the change.",
+        "Kyrenox requires the password to meet the minimum requirement shown in the form.",
+      ],
+    },
+    {
+      title: "Set your sender name",
+      description:
+        "Choose the name Kyrenox shows to clients when you send messages.",
+      content: [
+        "Open Settings and go to the Communication section.",
+        "Enter the name you want clients to see when you send messages through Kyrenox.",
+        "Save your sender name. It will be used for outgoing client communication.",
+      ],
+    },
+  ],
+},
 ];
 
 const faqItems = [
