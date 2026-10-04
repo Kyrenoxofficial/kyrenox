@@ -173,7 +173,7 @@ useEffect(() => {
               </button>
             </div>
 
-            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-56">
+            <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-80">
               <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
                 Workspace
               </p>
