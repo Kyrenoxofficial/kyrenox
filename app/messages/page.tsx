@@ -989,7 +989,7 @@ const reviewingProject = reviewingMessage?.project_id
 </header>
 
           <div className="flex min-h-0 flex-1 p-4 md:p-6">
-            <div className="flex h-[calc(100dvh-9.5rem)] min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white md:h-[calc(100vh-9.5rem)]">
+            <div className="flex h-[calc(100dvh-6rem)] min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white md:h-[calc(100vh-9.5rem)]">
               {/* Conversations */}
               <aside
   className={`h-full w-full shrink-0 overflow-y-auto border-r border-[#E5E7EB] md:w-80 ${
@@ -1573,13 +1573,19 @@ const reviewingProject = reviewingMessage?.project_id
   ) : (
     <>
       <textarea
-        ref={draftTextareaRef}
-        value={draft}
-        onChange={(event) =>
-          setDraft(event.target.value)
-        }
-        placeholder="Write a message draft..."
-        rows={1}
+  ref={draftTextareaRef}
+  value={draft}
+  onChange={(event) =>
+    setDraft(event.target.value)
+  }
+  onKeyDown={(event) => {
+    if (event.key === "Enter" && event.shiftKey === false) {
+      event.preventDefault();
+      event.currentTarget.blur();
+    }
+  }}
+  placeholder="Write a message draft..."
+  rows={1}
         className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-3 text-base leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
       />
 
