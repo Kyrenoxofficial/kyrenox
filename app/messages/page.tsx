@@ -377,13 +377,6 @@ useEffect(() => {
   textarea.style.height = `${nextHeight}px`;
   textarea.style.overflowY =
     textarea.scrollHeight > maxHeight ? "auto" : "hidden";
-
-  requestAnimationFrame(() => {
-  messagesEndRef.current?.scrollIntoView({
-    behavior: "auto",
-    block: "end",
-  });
-});
 }, [draft]);
 
 
