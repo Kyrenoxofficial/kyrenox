@@ -257,38 +257,52 @@ setLoading(false);
             </Link>
           </div>
 
-          <p className="px-3 pb-3 pt-8 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
-            Help & Support
-          </p>
-
-          <div className="space-y-1">
-            <Link
-              href="/help"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
-            >
-              <BookOpen className="h-4 w-4" />
-              Help Center
-            </Link>
-
-            <Link
-              href="/help/support"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
-            >
-              <MessageSquare className="h-4 w-4" />
-              Contact Support
-            </Link>
-          </div>
         </nav>
 
-        <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
-          <Link
-            href="/settings"
-            className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
-          >
-            <SettingsIcon className="h-4 w-4" />
-            Settings
-          </Link>
-        </div>
+       <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
+  <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+    Help & Support
+  </p>
+
+  <div className="space-y-1">
+    <Link
+      href="/help"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <BookOpen className="h-4 w-4" />
+      Help Center
+    </Link>
+
+    <Link
+      href="/help/support"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <MessageSquare className="h-4 w-4" />
+      Contact Support
+    </Link>
+  </div>
+
+  <div className="mt-3 border-t border-[#E5E7EB] pt-3">
+    <Link
+      href="/settings"
+      className="flex items-center gap-3 rounded-lg bg-[#F5F5F5] px-3 py-2.5 text-sm font-medium text-[#111111]"
+    >
+      <SettingsIcon className="h-4 w-4" />
+      Settings
+    </Link>
+
+    <button
+      type="button"
+      onClick={async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/login";
+      }}
+      className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      Log out
+    </button>
+  </div>
+</div>
       </aside>
 
       <section className="flex min-h-0 min-w-0 flex-1 flex-col">
