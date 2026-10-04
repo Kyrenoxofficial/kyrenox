@@ -825,7 +825,12 @@ const reviewingProject = reviewingMessage?.project_id
   }
 
   return (
-    <main className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]">
+    <main
+  className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]"
+  style={{
+    height: "var(--kyrenox-visual-height, 100vh)",
+  }}
+>
       <div className="flex h-full">
        {/* Desktop sidebar */}
 <aside className="hidden h-screen w-64 shrink-0 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
@@ -1004,12 +1009,7 @@ const reviewingProject = reviewingMessage?.project_id
 </header>
 
           <div className="flex min-h-0 flex-1 p-4 md:p-6">
-            <div
-  className="flex min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white md:h-[calc(100vh-9.5rem)]"
-  style={{
-    height: "calc(var(--kyrenox-visual-height, 100dvh) - 7rem)",
-  }}
->
+            <div className="flex h-full min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
               {/* Conversations */}
               <aside
   className={`h-full w-full shrink-0 overflow-y-auto border-r border-[#E5E7EB] md:w-80 ${
