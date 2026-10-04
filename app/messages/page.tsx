@@ -103,28 +103,7 @@ const [loadError, setLoadError] = useState("");
   const draftTextareaRef = useRef<HTMLTextAreaElement>(null);
 
 
-  useEffect(() => {
-  const viewport = window.visualViewport;
-
-  if (!viewport) {
-    return;
-  }
-
-  const updateViewportHeight = () => {
-    document.documentElement.style.setProperty(
-      "--kyrenox-visual-height",
-      `${viewport.height}px`
-    );
-  };
-
-  updateViewportHeight();
-
-  viewport.addEventListener("resize", updateViewportHeight);
-
-  return () => {
-    viewport.removeEventListener("resize", updateViewportHeight);
-  };
-}, []);
+  
 
   useEffect(() => {
     async function loadData() {
@@ -825,12 +804,7 @@ const reviewingProject = reviewingMessage?.project_id
   }
 
   return (
-    <main
-  className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]"
-  style={{
-    height: "var(--kyrenox-visual-height, 100vh)",
-  }}
->
+    <main className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]">
       <div className="flex h-full">
        {/* Desktop sidebar */}
 <aside className="hidden h-screen w-64 shrink-0 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
@@ -1009,7 +983,7 @@ const reviewingProject = reviewingMessage?.project_id
 </header>
 
           <div className="flex min-h-0 flex-1 p-4 md:p-6">
-            <div className="flex h-full min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+            <div className="flex h-[calc(100dvh-6rem)] min-h-0 w-full overflow-hidden rounded-xl border border-[#E5E7EB] bg-white md:h-[calc(100vh-9.5rem)]">
               {/* Conversations */}
               <aside
   className={`h-full w-full shrink-0 overflow-y-auto border-r border-[#E5E7EB] md:w-80 ${
