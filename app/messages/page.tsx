@@ -1589,7 +1589,7 @@ const reviewingProject = reviewingMessage?.project_id
         className="max-h-[120px] w-full resize-none overflow-y-hidden rounded-lg border border-[#D1D5DB] bg-white px-3 py-2.5 text-base leading-5 text-[#111111] outline-none placeholder:text-[#9CA3AF] focus:border-[#111111] sm:text-sm"
       />
 
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-2 flex items-center gap-2">
         <div className="flex items-center gap-2">
           <select
             value={draftProjectId}
@@ -1627,7 +1627,7 @@ const reviewingProject = reviewingMessage?.project_id
           type="button"
           onClick={saveDraft}
           disabled={savingDraft || !draft.trim()}
-          className="flex items-center justify-center gap-2 rounded-md bg-[#111111] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#222222] disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex flex-1 items-center justify-center gap-2 rounded-md bg-[#111111] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#222222] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Pencil className="h-4 w-4" />
           {savingDraft
@@ -1636,7 +1636,7 @@ const reviewingProject = reviewingMessage?.project_id
         </button>
       </div>
 
-      <p className="mt-2 text-[11px] text-[#9CA3AF]">
+      <p className="mt-2 hidden text-[11px] text-[#9CA3AF] sm:block">
         Drafts are saved in Kyrenox. Nothing is sent
         externally yet.
       </p>
