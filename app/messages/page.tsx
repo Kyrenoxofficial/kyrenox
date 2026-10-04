@@ -1303,7 +1303,7 @@ const reviewingProject = reviewingMessage?.project_id
                     </div>
 
                     {/* Messages */}
-                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-8">
+                    <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-28 pt-6 md:px-8 md:py-6">
                       {selectedMessages.length === 0 ? (
                         <div className="flex h-full min-h-64 items-center justify-center text-center">
                           <div>
@@ -1475,7 +1475,7 @@ const reviewingProject = reviewingMessage?.project_id
                     </div>
 
                     {/* Composer */}
-                    <div className="border-t border-[#E5E7EB] bg-white p-3 md:p-5">
+                   <div className="relative z-10 border-t border-[#E5E7EB] bg-white p-3 md:p-5">
                       {(savingError || aiError) && (
   <div className="mb-3 space-y-1">
     {savingError && (
