@@ -5,7 +5,9 @@ import {
   Activity,
   Archive,
   BarChart3,
+  BookOpen,
   Eye,
+  EyeOff,
   FileText,
   FolderKanban,
   LayoutDashboard,
@@ -18,7 +20,7 @@ import {
   Trash2,
   Users,
   Zap,
-   X,
+  X,
 } from "lucide-react";
 import { createClient } from "../utils/client";
 import MobileSidebar from "../MobileSidebar";
@@ -928,24 +930,48 @@ const reviewingProject = reviewingMessage?.project_id
   </nav>
 
   <div className="shrink-0 border-t border-[#E5E7EB] bg-white p-4">
-  <a
-    href="/settings"
-    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
-  >
-    <Settings className="h-4 w-4" />
-    Settings
-  </a>
+  <p className="px-3 pb-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">
+    Help & Support
+  </p>
 
-  <button
-  type="button"
-  onClick={async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
-  }}
-  className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
->
-  Log out
-</button>
+  <div className="space-y-1">
+    <a
+      href="/help"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <BookOpen className="h-4 w-4" />
+      Help Center
+    </a>
+
+    <a
+      href="/help/support"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <MessageSquare className="h-4 w-4" />
+      Contact Support
+    </a>
+  </div>
+
+  <div className="mt-3 border-t border-[#E5E7EB] pt-3">
+    <a
+      href="/settings"
+      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      <Settings className="h-4 w-4" />
+      Settings
+    </a>
+
+    <button
+      type="button"
+      onClick={async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/login";
+      }}
+      className="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-[#6B7280] transition hover:bg-[#F8F9FA] hover:text-[#111111]"
+    >
+      Log out
+    </button>
+  </div>
 </div>
 </aside>
 
