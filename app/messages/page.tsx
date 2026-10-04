@@ -378,14 +378,12 @@ useEffect(() => {
   textarea.style.overflowY =
     textarea.scrollHeight > maxHeight ? "auto" : "hidden";
 
-  if (window.innerWidth >= 768) {
   requestAnimationFrame(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "auto",
-      block: "end",
-    });
+  messagesEndRef.current?.scrollIntoView({
+    behavior: "auto",
+    block: "end",
   });
-}
+});
 }, [draft]);
 
 
