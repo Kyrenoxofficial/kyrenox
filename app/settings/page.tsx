@@ -141,7 +141,7 @@ setLoading(false);
   }
 
   return (
-  <main className="h-screen overflow-hidden bg-[#F8F9FA] text-[#111111]">
+  <main className="h-[100dvh] overflow-hidden bg-[#F8F9FA] text-[#111111]">
     <div className="flex h-full">
       <aside className="hidden h-screen w-64 shrink-0 border-r border-[#E5E7EB] bg-white md:flex md:flex-col">
         <div className="flex h-20 items-center border-b border-[#E5E7EB] px-6">
