@@ -11,6 +11,7 @@ type Proposal = {
   title: string;
   status: string;
   amount: number | null;
+  accepted_at: string | null;
   created_at: string;
 };
 
@@ -104,7 +105,7 @@ export default function AnalyticsPage() {
     ] = await Promise.all([
       supabase
         .from("proposals")
-        .select("id, title, status, amount, created_at")
+        .select("id, title, status, amount, accepted_at, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false }),
 
@@ -176,36 +177,43 @@ export default function AnalyticsPage() {
     setTasks(nextTasks.length);
 
     const currentYear = new Date().getFullYear();
-    const months: MonthData[] = [];
+const months: MonthData[] = [];
+let cumulativeRevenue = 0;
 
-    for (let month = 0; month < 12; month += 1) {
-      const monthRevenue = nextProposals
-        .filter((proposal) => {
-          if (proposal.status !== "accepted") {
-            return false;
-          }
+for (let month = 0; month < 12; month += 1) {
+  const monthRevenue = nextProposals
+    .filter((proposal) => {
+      if (proposal.status !== "accepted") {
+        return false;
+      }
 
-          const createdAt = new Date(proposal.created_at);
+      if (!proposal.accepted_at) {
+        return false;
+      }
 
-          return (
-            createdAt.getFullYear() === currentYear &&
-            createdAt.getMonth() === month
-          );
-        })
-        .reduce(
-          (sum, proposal) => sum + Number(proposal.amount || 0),
-          0
-        );
+      const acceptedAt = new Date(proposal.accepted_at);
 
-      const date = new Date(currentYear, month, 1);
+      return (
+        acceptedAt.getFullYear() === currentYear &&
+        acceptedAt.getMonth() === month
+      );
+    })
+    .reduce(
+      (sum, proposal) => sum + Number(proposal.amount || 0),
+      0
+    );
 
-      months.push({
-        label: date.toLocaleDateString("en-US", {
-          month: "short",
-        }),
-        revenue: monthRevenue,
-      });
-    }
+  cumulativeRevenue += monthRevenue;
+
+  const date = new Date(currentYear, month, 1);
+
+  months.push({
+    label: date.toLocaleDateString("en-US", {
+      month: "short",
+    }),
+    revenue: cumulativeRevenue,
+  });
+}
 
     setMonthlyRevenue(months);
     setLoading(false);

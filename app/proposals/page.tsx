@@ -13,6 +13,7 @@ type Proposal = {
   amount: number | null;
   valid_until: string | null;
   content: string | null;
+  accepted_at: string | null;
   created_at: string;
 };
 
@@ -42,6 +43,8 @@ export default function ProposalsPage() {
   const [proposalClientId, setProposalClientId] = useState("");
   const [proposalProjectId, setProposalProjectId] = useState("");
   const [proposalStatus, setProposalStatus] = useState("draft");
+  const [proposalAcceptedAt, setProposalAcceptedAt] =
+  useState<string | null>(null);
   const [proposalAmount, setProposalAmount] = useState("");
   const [proposalValidUntil, setProposalValidUntil] = useState("");
   const [proposalContent, setProposalContent] = useState("");
@@ -66,7 +69,7 @@ export default function ProposalsPage() {
         supabase
           .from("proposals")
           .select(
-            "id, title, client_id, project_id, status, amount, valid_until, content, created_at"
+            "id, title, client_id, project_id, status, amount, valid_until, content, accepted_at, created_at"
           )
           .eq("user_id", user.id)
           .order("created_at", { ascending: false }),
@@ -114,6 +117,7 @@ useEffect(() => {
     setProposalClientId("");
     setProposalProjectId("");
     setProposalStatus("draft");
+    setProposalAcceptedAt(null);
     setProposalAmount("");
     setProposalValidUntil("");
     setProposalContent("");
@@ -129,6 +133,7 @@ useEffect(() => {
     setProposalClientId("");
     setProposalProjectId("");
     setProposalStatus("draft");
+    setProposalAcceptedAt(null);
     setProposalAmount("");
     setProposalValidUntil("");
     setProposalContent("");
@@ -141,6 +146,7 @@ useEffect(() => {
     setProposalClientId("");
     setProposalProjectId("");
     setProposalStatus("draft");
+    setProposalAcceptedAt(null);
     setProposalAmount("");
     setProposalValidUntil("");
     setProposalContent("");
@@ -153,6 +159,7 @@ useEffect(() => {
     setProposalClientId(proposal.client_id?.toString() ?? "");
     setProposalProjectId(proposal.project_id?.toString() ?? "");
     setProposalStatus(proposal.status);
+    setProposalAcceptedAt(proposal.accepted_at);
     setProposalAmount(
       proposal.amount !== null ? proposal.amount.toString() : ""
     );
@@ -178,6 +185,13 @@ useEffect(() => {
       return;
     }
 
+
+const nextAcceptedAt =
+  proposalStatus === "accepted"
+    ? proposalAcceptedAt ?? new Date().toISOString()
+    : null;
+
+
     if (editingProposalId) {
       const { error } = await supabase
         .from("proposals")
@@ -190,8 +204,9 @@ useEffect(() => {
             ? Number(proposalProjectId)
             : null,
           status: proposalStatus,
-          amount,
-          valid_until: proposalValidUntil || null,
+accepted_at: nextAcceptedAt,
+amount,
+valid_until: proposalValidUntil || null,
           content: proposalContent.trim() || null,
         })
         .eq("id", editingProposalId);
@@ -214,6 +229,7 @@ useEffect(() => {
                   ? Number(proposalProjectId)
                   : null,
                 status: proposalStatus,
+                accepted_at: nextAcceptedAt,
                 amount,
                 valid_until:
                   proposalValidUntil || null,
@@ -245,12 +261,13 @@ useEffect(() => {
             ? Number(proposalProjectId)
             : null,
           status: proposalStatus,
+          accepted_at: nextAcceptedAt,
           amount,
           valid_until: proposalValidUntil || null,
           content: proposalContent.trim() || null,
         })
         .select(
-          "id, title, client_id, project_id, status, amount, valid_until, content, created_at"
+          "id, title, client_id, project_id, status, amount, valid_until, content, accepted_at, created_at"
         )
         .single();
 
@@ -723,16 +740,14 @@ useEffect(() => {
                 </div>
 
 
-<span
-  className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-    proposal.status
-  )}`}
->
-  {getStatusLabel(proposal.status)}
-</span>
-
-
-                <div className="flex shrink-0 items-center gap-3">
+<div className="flex shrink-0 items-center gap-3">
+  <span
+    className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+      proposal.status
+    )}`}
+  >
+    {getStatusLabel(proposal.status)}
+  </span>
                   <button
                     type="button"
                     onClick={(e) => {

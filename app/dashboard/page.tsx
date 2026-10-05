@@ -88,55 +88,90 @@ const { count: dueTodayCount } = await supabase
   .gte("due_date", startOfToday.toISOString())
   .lt("due_date", endOfToday.toISOString());
 
-  const { data: revenueRows } = await supabase
-  .from("revenue")
-  .select("amount")
+ const { data: acceptedProposals } = await supabase
+  .from("proposals")
+  .select("amount, accepted_at")
   .eq("user_id", user.id)
-  .eq("status", "paid");
+  .eq("status", "accepted");
 
 const totalRevenue =
-  revenueRows?.reduce((total, row) => total + Number(row.amount), 0) ?? 0;
+  acceptedProposals?.reduce(
+    (total, proposal) => total + Number(proposal.amount ?? 0),
+    0
+  ) ?? 0;
+
+
+const startOfCurrentWeek = new Date();
+const dayOfWeek = startOfCurrentWeek.getUTCDay();
+const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+startOfCurrentWeek.setUTCDate(
+  startOfCurrentWeek.getUTCDate() + diffToMonday
+);
+startOfCurrentWeek.setUTCHours(0, 0, 0, 0);
+
+const currentWeekRevenue =
+  acceptedProposals?.reduce((total, proposal) => {
+    if (!proposal.accepted_at) {
+      return total;
+    }
+
+    const acceptedAt = new Date(proposal.accepted_at);
+
+    if (acceptedAt < startOfCurrentWeek) {
+      return total;
+    }
+
+    return total + Number(proposal.amount ?? 0);
+  }, 0) ?? 0;
+
 
 const startOfCurrentMonth = new Date();
 startOfCurrentMonth.setUTCDate(1);
 startOfCurrentMonth.setUTCHours(0, 0, 0, 0);
 
 const startOfPreviousMonth = new Date(startOfCurrentMonth);
-startOfPreviousMonth.setUTCMonth(startOfPreviousMonth.getUTCMonth() - 1);
-
-const { data: currentMonthRevenueRows } = await supabase
-  .from("revenue")
-  .select("amount")
-  .eq("user_id", user.id)
-  .eq("status", "paid")
-  .gte("paid_at", startOfCurrentMonth.toISOString());
-
-const { data: previousMonthRevenueRows } = await supabase
-  .from("revenue")
-  .select("amount")
-  .eq("user_id", user.id)
-  .eq("status", "paid")
-  .gte("paid_at", startOfPreviousMonth.toISOString())
-  .lt("paid_at", startOfCurrentMonth.toISOString());
+startOfPreviousMonth.setUTCMonth(
+  startOfPreviousMonth.getUTCMonth() - 1
+);
 
 const currentMonthRevenue =
-  currentMonthRevenueRows?.reduce(
-    (total, row) => total + Number(row.amount),
-    0
-  ) ?? 0;
+  acceptedProposals?.reduce((total, proposal) => {
+    if (
+      !proposal.accepted_at ||
+      new Date(proposal.accepted_at) < startOfCurrentMonth
+    ) {
+      return total;
+    }
+
+    return total + Number(proposal.amount ?? 0);
+  }, 0) ?? 0;
 
 const previousMonthRevenue =
-  previousMonthRevenueRows?.reduce(
-    (total, row) => total + Number(row.amount),
-    0
-  ) ?? 0;
+  acceptedProposals?.reduce((total, proposal) => {
+    if (!proposal.accepted_at) {
+      return total;
+    }
+
+    const acceptedAt = new Date(proposal.accepted_at);
+
+    if (
+      acceptedAt < startOfPreviousMonth ||
+      acceptedAt >= startOfCurrentMonth
+    ) {
+      return total;
+    }
+
+    return total + Number(proposal.amount ?? 0);
+  }, 0) ?? 0;
+
+const revenueChange =
+  currentMonthRevenue - previousMonthRevenue;
 
 const revenueGrowth =
   previousMonthRevenue === 0
     ? null
-    : ((currentMonthRevenue - previousMonthRevenue) /
-        previousMonthRevenue) *
-      100;
+    : (revenueChange / previousMonthRevenue) * 100;
 
   const { data: todayTasks } = await supabase
   .from("tasks")
@@ -357,9 +392,12 @@ return (
   })}
 </p>
                 <p className="mt-1 text-xs text-green-600">
-  {revenueGrowth === null
-    ? "No data yet"
-    : `${revenueGrowth >= 0 ? "+" : ""}${revenueGrowth.toFixed(1)}% this month`}
+  {currentWeekRevenue === 0
+    ? "No new revenue this week"
+    : `+€${currentWeekRevenue.toLocaleString("de-DE", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })} this week`}
 </p>
               </div>
 
