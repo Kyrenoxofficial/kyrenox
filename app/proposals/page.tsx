@@ -688,19 +688,9 @@ useEffect(() => {
                 className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm transition hover:border-[#D1D5DB] hover:bg-[#FCFCFC]"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <p className="truncate text-sm font-medium text-[#111111] md:text-base">
-                      {proposal.title}
-                    </p>
-
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                        proposal.status
-                      )}`}
-                    >
-                      {getStatusLabel(proposal.status)}
-                    </span>
-                  </div>
+                  <p className="truncate text-sm font-medium text-[#111111] md:text-base">
+  {proposal.title}
+</p>
 
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#9CA3AF]">
                     {clientName && (
@@ -731,6 +721,16 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
+
+
+<span
+  className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+    proposal.status
+  )}`}
+>
+  {getStatusLabel(proposal.status)}
+</span>
+
 
                 <div className="flex shrink-0 items-center gap-3">
                   <button
