@@ -108,7 +108,7 @@ export async function runMessageReceivedAutomations(
     );
   });
 
- const matchingAutomations =
+const matchingAutomations =
   candidateAutomations.filter((automation) => {
     return (
       matchesScope(
@@ -123,15 +123,60 @@ export async function runMessageReceivedAutomations(
     );
   });
 
-const autoSendAutomations =
+const {
+  data: previousAutomationRuns,
+  error: previousAutomationRunsError,
+} = await admin
+  .from("activity_logs")
+  .select("metadata")
+  .eq("user_id", input.userId)
+  .eq("event_type", "automation.triggered")
+  .eq("message_id", input.messageId);
+
+if (previousAutomationRunsError) {
+  console.error(
+    "[Automation Engine] Failed to check previous automation runs:",
+    previousAutomationRunsError
+  );
+}
+
+const alreadyTriggeredAutomationIds = new Set<number>();
+
+for (const log of previousAutomationRuns ?? []) {
+  const metadata = log.metadata;
+
+  if (
+    metadata &&
+    typeof metadata === "object" &&
+    !Array.isArray(metadata)
+  ) {
+    const automationId = Number(
+      (metadata as Record<string, unknown>).automationId
+    );
+
+    if (Number.isFinite(automationId)) {
+      alreadyTriggeredAutomationIds.add(automationId);
+    }
+  }
+}
+
+const unprocessedAutomations =
   matchingAutomations.filter(
+    (automation) =>
+      !alreadyTriggeredAutomationIds.has(
+        automation.id
+      )
+  );
+
+const autoSendAutomations =
+  unprocessedAutomations.filter(
     (automation) => automation.mode === "auto_send"
   );
 
 const hasAutoSendConflict =
   autoSendAutomations.length > 1;
 
-for (const automation of matchingAutomations) {
+for (const automation of unprocessedAutomations) {
   if (
   automation.mode === "auto_send" &&
   hasAutoSendConflict
@@ -407,5 +452,5 @@ if (lastRunError) {
     }
   }
 
-  return matchingAutomations;
+  return unprocessedAutomations;
 }
